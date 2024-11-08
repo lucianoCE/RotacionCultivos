@@ -18,6 +18,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
     private final double[] precioCultivo; // Precio de venta por cultivo en $/kg
     private final double[] costoMantCultivo; // Costo de mantenimiento por cultivo en $/ha
 
+    
     public AgriculturalOptimizationProblem(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] RrendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo) {
         this.cantParcelas = cantParcelas;
         this.cantTrimestres = cantTrimestres;
@@ -37,7 +38,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
         List<Integer> upperLimit = new ArrayList<>(getNumberOfVariables());
 
         for (int i = 0; i < getNumberOfVariables(); i++) {
-            lowerLimit.add(0); // 0 indica dejar la parcela en descanso
+            lowerLimit.add(0);
             upperLimit.add(cantCultivos);
         }
 
