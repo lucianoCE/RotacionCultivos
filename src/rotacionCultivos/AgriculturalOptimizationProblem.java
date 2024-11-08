@@ -49,7 +49,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
         double totalProfit = 0.0;
         double diversityScore = 0.0;
         
-        // Matriz de cultivos asignadoss
+        // Matriz de cultivos asignados
         int[][] cropPlan = new int[cantParcelas][cantTrimestres];
         for (int i = 0; i < cantParcelas; i++) {
             for (int t = 0; t < cantTrimestres; t++) {
