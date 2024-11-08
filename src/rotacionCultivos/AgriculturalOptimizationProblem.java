@@ -1,7 +1,5 @@
 package rotacionCultivos;
 
-import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.integerproblem.impl.AbstractIntegerProblem;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 
@@ -18,7 +16,6 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
     private final double[] precioCultivo; // Precio de venta por cultivo en $/kg
     private final double[] costoMantCultivo; // Costo de mantenimiento por cultivo en $/ha
 
-    
     public AgriculturalOptimizationProblem(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] RrendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo) {
         this.cantParcelas = cantParcelas;
         this.cantTrimestres = cantTrimestres;
