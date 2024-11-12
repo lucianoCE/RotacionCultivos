@@ -1,14 +1,17 @@
 package rotacionCultivos;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.uma.jmetal.problem.integerproblem.impl.AbstractIntegerProblem;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("serial")
 public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
-
-    private final int cantParcelas; // cantParcelasúmero de parcelas
+	
+	private final int cantParcelas; // cantParcelasúmero de parcelas
     private final int cantTrimestres; // Número de trimestres
     private final int cantCultivos; // Tipos de cultivos
     private final double[] areaParcelas; // Vector de áreas de parcelas
@@ -41,7 +44,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
 
         setVariableBounds(lowerLimit, upperLimit);
     }
-
+    
     @Override
     public void evaluate(IntegerSolution solution) {
         double totalProfit = 0.0;
