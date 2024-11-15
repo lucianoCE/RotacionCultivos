@@ -1,18 +1,19 @@
 package rotacionCultivos;
 
+import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
+import org.uma.jmetal.operator.crossover.CrossoverOperator;
+import org.uma.jmetal.operator.crossover.impl.IntegerSBXCrossover;
+import org.uma.jmetal.operator.mutation.MutationOperator;
+import org.uma.jmetal.operator.mutation.impl.IntegerPolynomialMutation;
+import org.uma.jmetal.solution.integersolution.IntegerSolution;
+import org.uma.jmetal.util.AbstractAlgorithmRunner;
+import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
+
 import java.util.List;
 
-import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.algorithm.multiobjective.spea2.SPEA2Builder;
-import org.uma.jmetal.operator.crossover.impl.IntegerSBXCrossover;
-import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
-import org.uma.jmetal.solution.integersolution.IntegerSolution;
-
-import rotacionCultivos.AgriculturalOptimizationProblem;
-
-public class Main {
+public class Main extends AbstractAlgorithmRunner {
     public static void main(String[] args) {
-        // Define your instance parameters
         int cantParcelas = 5;
         int cantTrimestres = 4;
         int cantCultivos = 3;
@@ -26,7 +27,30 @@ public class Main {
             cantParcelas, cantTrimestres, cantCultivos, areaParcelas, rendimientoCultivo, precioCultivo, costoMantCultivo
         );
 
-        // Select an algorithm (e.g., NSGA-II)
-        System.out.println("bobr");
+        // Define the operators
+        double crossoverProbability = 0.9;
+        double mutationProbability = 1.0 / problem.getNumberOfVariables();
+        double distributionIndex = 20.0;
+
+        CrossoverOperator<IntegerSolution> crossover = new IntegerSBXCrossover(crossoverProbability, distributionIndex);
+        MutationOperator<IntegerSolution> mutation = new IntegerPolynomialMutation(mutationProbability, distributionIndex);
+
+        Algorithm<List<IntegerSolution>> algorithm = new NSGAIIBuilder<IntegerSolution>(
+            problem,
+            crossover,
+            mutation,
+            100 // Population size
+        ).setMaxEvaluations(25000)
+         .setSolutionListEvaluator(new SequentialSolutionListEvaluator<>())
+         .build();
+
+        // Execute the algorithm
+        algorithm.run();
+
+        // Retrieve the results
+        List<IntegerSolution> population = algorithm.getResult();
+
+        // Print the results
+        printFinalSolutionSet(population);
     }
 }
