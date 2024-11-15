@@ -27,22 +27,6 @@ public class Main {
         );
 
         // Select an algorithm (e.g., NSGA-II)
-        Algorithm<List<IntegerSolution>> algorithm = new SPEA2Builder<>(
-        	    problem,
-        	    new IntegerSBXCrossover(1.0, 20.0), // Crossover operator
-        	    new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0) // Mutation operator
-        	)
-        	.setMaxEvaluations(25000)
-        	.setPopulationSize(100)
-        	.build();
-
-        // Run the algorithm
-        algorithm.run();
-
-        // Retrieve results
-        List<IntegerSolution> population = algorithm.getResult();
-        for (IntegerSolution solution : population) {
-            System.out.println("Profit: " + (-solution.getObjective(0)) + ", Diversity Score: " + (-solution.getObjective(1)));
-        }
+        System.out.println("bobr");
     }
 }

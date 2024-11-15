@@ -32,8 +32,8 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
         setName("AgriculturalOptimizationProblem");
 
         // Definir el rango de valores (0 a cantCultivos) para los cultivos
-        List<Integer> lowerLimit = new ArrayList<>(getNumberOfVariables());
-        List<Integer> upperLimit = new ArrayList<>(getNumberOfVariables());
+        List<Integer> lowerLimit = new ArrayList<>();
+        List<Integer> upperLimit = new ArrayList<>();
 
         for (int i = 0; i < getNumberOfVariables(); i++) {
             lowerLimit.add(0);
