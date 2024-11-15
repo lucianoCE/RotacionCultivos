@@ -17,12 +17,12 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
     private final double[] precioCultivo; // Precio de venta por cultivo en $/kg
     private final double[] costoMantCultivo; // Costo de mantenimiento por cultivo en $/ha
 
-    public AgriculturalOptimizationProblem(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] RrendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo) {
+    public AgriculturalOptimizationProblem(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo) {
         this.cantParcelas = cantParcelas;
         this.cantTrimestres = cantTrimestres;
         this.cantCultivos = cantCultivos;
         this.areaParcelas = areaParcelas;
-        this.rendimientoCultivo = RrendimientoCultivo;
+        this.rendimientoCultivo = rendimientoCultivo;
         this.precioCultivo = precioCultivo;
         this.costoMantCultivo = costoMantCultivo;
 
@@ -52,7 +52,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
         int[][] cropPlan = new int[cantParcelas][cantTrimestres];
         for (int i = 0; i < cantParcelas; i++) {
             for (int t = 0; t < cantTrimestres; t++) {
-                cropPlan[i][t] = solution.getVariable(i * cantTrimestres + t);
+                cropPlan[i][t] = 1;
             }
         }
 
