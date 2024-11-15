@@ -50,16 +50,19 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
         
         // Matriz de cultivos asignados
         int[][] cropPlan = new int[cantParcelas][cantTrimestres];
+        
+        // Mapeo de variables de la solución a la matriz cropPlan
         for (int i = 0; i < cantParcelas; i++) {
             for (int t = 0; t < cantTrimestres; t++) {
-                cropPlan[i][t] = 1;
+                int variableIndex = i * cantTrimestres + t; // Cálculo del índice de la variable
+                cropPlan[i][t] = solution.getVariable(variableIndex); // Asignación de la variable
             }
         }
 
         // Calcular el rendimiento total (función CT)
         for (int i = 0; i < cantParcelas; i++) {
             for (int t = 0; t < cantTrimestres; t++) {
-                int crop = cropPlan[i][t];
+                int crop = cropPlan[i][t]; // Tipo de cultivo plantado en la parcela i en el trimestre t.
                 if (crop > 0) { // Si no está en descanso
                     totalProfit += areaParcelas[i] * (rendimientoCultivo[crop] * precioCultivo[crop] - costoMantCultivo[crop]);
                 }
@@ -68,6 +71,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
         solution.setObjective(0, -totalProfit); // Negativo para maximizar
 
         // Calcular la diversidad (función DS usando índice de Shannon)
+        // Primero se obtiene la frecuencia de cada cultivo en cada parcela.
         int[][] cropFrequency = new int[cantParcelas][cantCultivos];
         for (int i = 0; i < cantParcelas; i++) {
         	for (int t = 0; t < cantTrimestres; t++) {
@@ -75,6 +79,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
             }
         }
 
+        // Para cada parcela se calcula el indice de diversidad.
         for (int i = 0; i < cantParcelas; i++) {
         	for (int k = 0; k < cantCultivos; k++) {
 	            if (cropFrequency[i][k] > 0) {
