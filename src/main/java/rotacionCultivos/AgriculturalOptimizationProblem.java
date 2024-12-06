@@ -37,7 +37,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
 
         for (int i = 0; i < getNumberOfVariables(); i++) {
             lowerLimit.add(0);
-            upperLimit.add(cantCultivos);
+            upperLimit.add(cantCultivos - 1); // la cantidad de cultivos está indexada desde 0.
         }
 
         setVariableBounds(lowerLimit, upperLimit);
