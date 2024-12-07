@@ -37,7 +37,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
 
         for (int i = 0; i < getNumberOfVariables(); i++) {
             lowerLimit.add(0);
-            upperLimit.add(cantCultivos - 1); // la cantidad de cultivos está indexada desde 0.
+            upperLimit.add(cantCultivos - 1); // la cantidad de cultivos está indexada desde 1.
         }
 
         setVariableBounds(lowerLimit, upperLimit);
@@ -46,11 +46,11 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
     @Override
     public void evaluate(IntegerSolution solution) {
         double totalProfit = 0.0;
-        double diversityScore = 0.0;
-        
+        double totalDiversityScore = 0.0; // Almacena la diversidad total
+
         // Matriz de cultivos asignados
         int[][] cropPlan = new int[cantParcelas][cantTrimestres];
-        
+
         // Mapeo de variables de la solución a la matriz cropPlan
         for (int i = 0; i < cantParcelas; i++) {
             for (int t = 0; t < cantTrimestres; t++) {
@@ -64,31 +64,52 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
             for (int t = 0; t < cantTrimestres; t++) {
                 int crop = cropPlan[i][t]; // Tipo de cultivo plantado en la parcela i en el trimestre t.
                 if (crop > 0) { // Si no está en descanso
-                    totalProfit += areaParcelas[i] * (rendimientoCultivo[crop] * precioCultivo[crop] - costoMantCultivo[crop]);
+                    totalProfit += areaParcelas[i] * (rendimientoCultivo[crop] * (precioCultivo[crop] - costoMantCultivo[crop]));
+                } else {
+                	totalProfit -= costoMantCultivo[crop];
                 }
             }
         }
         solution.setObjective(0, -totalProfit); // Negativo para maximizar
-
-        // Calcular la diversidad (función DS usando índice de Shannon)
-        // Primero se obtiene la frecuencia de cada cultivo en cada parcela.
+        
+        // CÁLCULO DE DIVERSIDAD (función DS usando índice de Shannon)
+        
+        // Primero se obtiene la frecuencia de cada cultivo en cada parcela (para el cálculo de la fr).
         int[][] cropFrequency = new int[cantParcelas][cantCultivos];
-        for (int i = 0; i < cantParcelas; i++) {
-        	for (int t = 0; t < cantTrimestres; t++) {
-        		cropFrequency[i][cropPlan[i][t]] += 1;
+
+        // Calcular las frecuencias absolutas, excluyendo las parcelas sin cultivo
+        for (int i = 0; i < cantParcelas; i++) { 
+            for (int t = 0; t < cantTrimestres; t++) {
+                if (cropPlan[i][t] > 0) { // Ignorar parcelas sin cultivo (0)
+                    cropFrequency[i][cropPlan[i][t]] += 1;
+                }
             }
         }
 
-        // Para cada parcela se calcula el indice de diversidad.
+        // Calcular la diversidad para cada parcela
         for (int i = 0; i < cantParcelas; i++) {
-        	for (int k = 0; k < cantCultivos; k++) {
-	            if (cropFrequency[i][k] > 0) {
-	                double fk = cropFrequency[i][k];
-	                diversityScore += fk * Math.log(fk);
-	            }
-        	}
+            double totalCultivos = 0;  // Total de cultivos en la parcela i
+            for (int k = 1; k < cantCultivos; k++) {  // Empezar desde 1, ya que 0 significa "sin cultivo"
+                totalCultivos += cropFrequency[i][k];  // Sumar las frecuencias de cultivos
+            }
+
+            if (totalCultivos > 0) {  // Si la parcela tiene cultivos (no es 0)
+                double parcelDiversityScore = 0.0;  // Diversidad para esta parcela
+                for (int k = 1; k < cantCultivos; k++) {
+                    if (cropFrequency[i][k] > 0) {
+                        double fk = cropFrequency[i][k] / totalCultivos;  // Frecuencia relativa
+                        parcelDiversityScore += fk * Math.log(fk);
+                    }
+                }
+
+                // Normalizar la diversidad de esta parcela
+                parcelDiversityScore = -parcelDiversityScore / Math.log(cantCultivos - 1);  // Dividir entre el logaritmo de los cultivos (excluyendo el 0)
+                totalDiversityScore += parcelDiversityScore;  // Sumar a la diversidad total
+            }
         }
-        diversityScore = -diversityScore / Math.log(cantCultivos);
-        solution.setObjective(1, -diversityScore); // Negativo para maximizar
+
+        // Promediar la diversidad de todas las parcelas
+        double normalizedDiversityScore = totalDiversityScore / cantParcelas;
+        solution.setObjective(1, -normalizedDiversityScore);  // Negativo para maximizar
     }
 }
