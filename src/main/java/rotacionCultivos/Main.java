@@ -28,9 +28,9 @@ public class Main extends AbstractAlgorithmRunner {
         );
 
         // Define the operators
-        double crossoverProbability = 0.9;
+        double crossoverProbability = 0.75;
         double mutationProbability = 1.0 / problem.getNumberOfVariables();
-        double distributionIndex = 20.0;
+        double distributionIndex = 10.0;
 
         CrossoverOperator<IntegerSolution> crossover = new IntegerSBXCrossover(crossoverProbability, distributionIndex);
         MutationOperator<IntegerSolution> mutation = new IntegerPolynomialMutation(mutationProbability, distributionIndex);

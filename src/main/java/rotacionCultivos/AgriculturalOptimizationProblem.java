@@ -103,7 +103,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
                 }
 
                 // Normalizar la diversidad de esta parcela
-                parcelDiversityScore = -parcelDiversityScore / Math.log(cantCultivos - 1);  // Dividir entre el logaritmo de los cultivos (excluyendo el 0)
+                parcelDiversityScore = -parcelDiversityScore / Math.log(cantCultivos);  // Dividir entre el logaritmo de los cultivos
                 totalDiversityScore += parcelDiversityScore;  // Sumar a la diversidad total
             }
         }
