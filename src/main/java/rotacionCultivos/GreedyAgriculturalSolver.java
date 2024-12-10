@@ -68,7 +68,7 @@ public class GreedyAgriculturalSolver {
                         parcelDiversityScore += fk * Math.log(fk);
                     }
                 }
-                parcelDiversityScore = -parcelDiversityScore / Math.log(cantCultivos);
+                parcelDiversityScore = -parcelDiversityScore / Math.log(cantCultivos-1);
                 totalDiversityScore += parcelDiversityScore;
             }
         }
@@ -91,14 +91,24 @@ public class GreedyAgriculturalSolver {
             }
         } else if (prioridad.equals("diversidad")) {
             double maxDiversityScore = Double.NEGATIVE_INFINITY;
+            int[] totalCropFrequency = new int[cantCultivos];
+
+            // Calcular frecuencia total de cada cultivo en todas las parcelas
+            for (int p = 0; p < cantParcelas; p++) {
+                for (int c = 0; c < cantCultivos; c++) {
+                    totalCropFrequency[c] += cropFrequency[p][c];
+                }
+            }
+
             for (int cultivo = 1; cultivo < cantCultivos; cultivo++) { // Ignorar "sin cultivo" (0)
-                double diversityScore = -cropFrequency[parcela][cultivo]; // Menor frecuencia = mayor diversidad
+                double diversityScore = -totalCropFrequency[cultivo]; // Menor frecuencia global = mayor diversidad
                 if (diversityScore > maxDiversityScore) {
                     maxDiversityScore = diversityScore;
                     bestCrop = cultivo;
                 }
             }
         }
+
 
         return bestCrop;
     }

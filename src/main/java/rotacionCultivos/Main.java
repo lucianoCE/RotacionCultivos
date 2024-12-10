@@ -26,7 +26,7 @@ import java.util.List;
 
 public class Main extends AbstractAlgorithmRunner {
 	public static void main(String[] args) {
-	    String xmlFilePath = "src/main/resources/instancias/instancia_1.xml"; // Ruta del archivo XML
+	    String xmlFilePath = "src/main/resources/instancias/instancia_3.xml"; // Ruta del archivo XML
 	    AgriculturalData data = readDataFromXML(xmlFilePath);
 
 	    GreedyAgriculturalSolver solverProfit = new GreedyAgriculturalSolver(
