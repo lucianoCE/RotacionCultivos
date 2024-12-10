@@ -1,0 +1,9 @@
+<datos>
+    <cantParcelas>5</cantParcelas>
+    <cantTrimestres>4</cantTrimestres>
+    <cantCultivos>3</cantCultivos>
+    <areaParcelas>1.0, 1.5, 1.2, 1.3, 1.1</areaParcelas>
+    <rendimientoCultivo>0.0, 15.0, 12.0</rendimientoCultivo>
+    <precioCultivo>0.0, 1.8, 2.2</precioCultivo>
+    <costoMantCultivo>0.5, 0.6, 0.4</costoMantCultivo>
+</datos>
