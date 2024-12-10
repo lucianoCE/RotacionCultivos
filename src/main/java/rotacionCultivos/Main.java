@@ -29,10 +29,15 @@ public class Main extends AbstractAlgorithmRunner {
 	    String xmlFilePath = "src/main/resources/instancias/instancia_1.xml"; // Ruta del archivo XML
 	    AgriculturalData data = readDataFromXML(xmlFilePath);
 
-	    GreedyAgriculturalSolver solver = new GreedyAgriculturalSolver(
-	        data.cantParcelas, data.cantTrimestres, data.cantCultivos,
-	        data.areaParcelas, data.rendimientoCultivo, data.precioCultivo, data.costoMantCultivo);
-	    Result cropPlan = solver.solve();
+	    GreedyAgriculturalSolver solverProfit = new GreedyAgriculturalSolver(
+	        data.cantParcelas, data.cantTrimestres, data.cantCultivos, data.areaParcelas, 
+	        data.rendimientoCultivo, data.precioCultivo, data.costoMantCultivo, "ganancia");
+	    Result cropPlanProfit = solverProfit.solve();
+
+	    GreedyAgriculturalSolver solverDiversity = new GreedyAgriculturalSolver(
+		        data.cantParcelas, data.cantTrimestres, data.cantCultivos, data.areaParcelas, 
+		        data.rendimientoCultivo, data.precioCultivo, data.costoMantCultivo, "diversidad");
+	    Result cropPlanDiversity = solverDiversity.solve();
 
 	    // Crear la instancia del problema
 	    AgriculturalOptimizationProblem problem = new AgriculturalOptimizationProblem(
@@ -41,8 +46,11 @@ public class Main extends AbstractAlgorithmRunner {
 	    );
 
 	    // Inicializar población Greedy
-	    List<IntegerSolution> greedyResult = solver.initializePopulation(problem, cropPlan.cropPlan, cropPlan.totalProfit, cropPlan.diversityScore);
-
+	    List<IntegerSolution> greedyProfitResult = solverProfit.initializePopulation(problem, cropPlanProfit.cropPlan, cropPlanProfit.totalProfit, cropPlanProfit.diversityScore);
+	    
+	    List<IntegerSolution> greedyDiversityResult = solverDiversity.initializePopulation(problem, cropPlanDiversity.cropPlan, cropPlanDiversity.totalProfit, cropPlanDiversity.diversityScore);
+	    
+	    
 	    // Definir operadores para NSGA-II
 	    double crossoverProbability = 0.9;
 	    double mutationProbability = 1.0 / problem.getNumberOfVariables();
@@ -67,9 +75,13 @@ public class Main extends AbstractAlgorithmRunner {
 
 	    // Guardar resultados en archivos separados
 	    printFinalSolutionSet(population);
-	    saveSolutionsToCSV("greedy_results.csv", greedyResult, data);
 	    
-	    System.out.println(greedyResult);
+	    System.out.print("Greedy diversidad: ");
+	    System.out.println(greedyDiversityResult);
+	    saveSolutionsToCSV("greedy_diversity_results.csv", greedyDiversityResult, data);
+	    System.out.print("Greedy ganancia: ");
+	    System.out.println(greedyProfitResult);
+	    saveSolutionsToCSV("greedy_profit_results.csv", greedyProfitResult, data);
 
 	    System.out.println("Resultados guardados en archivos CSV.");
 	}
@@ -78,7 +90,7 @@ public class Main extends AbstractAlgorithmRunner {
 	 * Guarda las soluciones en un archivo CSV.
 	 */
 	private static void saveSolutionsToCSV(String fileName, List<IntegerSolution> solutions, AgriculturalData data) {
-	    try (FileWriter writer = new FileWriter(fileName)) {
+	    try (FileWriter writer = new FileWriter(fileName, false)) { // 'false' asegura sobrescritura
 	        // Escribir encabezado
 	        writer.append("Parcela,Trimestre,Cultivo,Ganancia\n");
 
@@ -108,6 +120,7 @@ public class Main extends AbstractAlgorithmRunner {
 	        System.err.println("Error al escribir el archivo CSV: " + e.getMessage());
 	    }
 	}
+
 
     private static AgriculturalData readDataFromXML(String filePath) {
         try {

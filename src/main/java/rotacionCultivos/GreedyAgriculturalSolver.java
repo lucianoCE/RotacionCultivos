@@ -14,8 +14,9 @@ public class GreedyAgriculturalSolver {
     private final double[] rendimientoCultivo;
     private final double[] precioCultivo;
     private final double[] costoMantCultivo;
+    private final String prioridad; // "ganancia" o "diversidad"
 
-    public GreedyAgriculturalSolver(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo) {
+    public GreedyAgriculturalSolver(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo, String prioridad) {
         this.cantParcelas = cantParcelas;
         this.cantTrimestres = cantTrimestres;
         this.cantCultivos = cantCultivos;
@@ -23,6 +24,7 @@ public class GreedyAgriculturalSolver {
         this.rendimientoCultivo = rendimientoCultivo;
         this.precioCultivo = precioCultivo;
         this.costoMantCultivo = costoMantCultivo;
+        this.prioridad = prioridad;
     }
 
     public Result solve() {
@@ -35,14 +37,12 @@ public class GreedyAgriculturalSolver {
         // Iterar sobre cada parcela y trimestre
         for (int parcela = 0; parcela < cantParcelas; parcela++) {
             for (int trimestre = 0; trimestre < cantTrimestres; trimestre++) {
-                int bestCrop = selectBestCrop(parcela);
+                int bestCrop = selectBestCrop(parcela, cropFrequency);
                 cropPlan[parcela][trimestre] = bestCrop;
 
                 // Calcular ganancia
                 if (bestCrop > 0) { // Si no está en descanso
                     totalProfit += areaParcelas[parcela] * (rendimientoCultivo[bestCrop] * (precioCultivo[bestCrop] - costoMantCultivo[bestCrop]));
-                } else {
-                    totalProfit -= costoMantCultivo[bestCrop];
                 }
 
                 // Actualizar frecuencia del cultivo
@@ -77,17 +77,26 @@ public class GreedyAgriculturalSolver {
         return new Result(cropPlan, totalProfit, normalizedDiversityScore);
     }
 
-    private int selectBestCrop(int parcela) {
-        double maxProfit = Double.NEGATIVE_INFINITY;
+    private int selectBestCrop(int parcela, int[][] cropFrequency) {
         int bestCrop = 0; // 0 representa descanso
 
-        // Evaluar cada cultivo y encontrar el que maximiza la ganancia
-        for (int cultivo = 0; cultivo < cantCultivos; cultivo++) {
-            double profit = areaParcelas[parcela] * (rendimientoCultivo[cultivo] * (precioCultivo[cultivo] - costoMantCultivo[cultivo]));
-
-            if (profit > maxProfit) {
-                maxProfit = profit;
-                bestCrop = cultivo;
+        if (prioridad.equals("ganancia")) {
+            double maxProfit = Double.NEGATIVE_INFINITY;
+            for (int cultivo = 0; cultivo < cantCultivos; cultivo++) {
+                double profit = areaParcelas[parcela] * (rendimientoCultivo[cultivo] * (precioCultivo[cultivo] - costoMantCultivo[cultivo]));
+                if (profit > maxProfit) {
+                    maxProfit = profit;
+                    bestCrop = cultivo;
+                }
+            }
+        } else if (prioridad.equals("diversidad")) {
+            double maxDiversityScore = Double.NEGATIVE_INFINITY;
+            for (int cultivo = 1; cultivo < cantCultivos; cultivo++) { // Ignorar "sin cultivo" (0)
+                double diversityScore = -cropFrequency[parcela][cultivo]; // Menor frecuencia = mayor diversidad
+                if (diversityScore > maxDiversityScore) {
+                    maxDiversityScore = diversityScore;
+                    bestCrop = cultivo;
+                }
             }
         }
 

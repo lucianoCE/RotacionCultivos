@@ -4,4 +4,5 @@
 FUN.csv
 VAR.csv
 jMetal.log
-greedy_results.csv
+greedy_profit_results.csv
+greedy_diversity_results.csv
