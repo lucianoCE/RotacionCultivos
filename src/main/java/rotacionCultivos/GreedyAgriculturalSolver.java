@@ -14,9 +14,10 @@ public class GreedyAgriculturalSolver {
     private final double[] rendimientoCultivo;
     private final double[] precioCultivo;
     private final double[] costoMantCultivo;
+    private final char[] temporadaCultivo;
     private final String prioridad; // "ganancia" o "diversidad"
 
-    public GreedyAgriculturalSolver(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo, String prioridad) {
+    public GreedyAgriculturalSolver(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo, String prioridad) {
         this.cantParcelas = cantParcelas;
         this.cantTrimestres = cantTrimestres;
         this.cantCultivos = cantCultivos;
@@ -24,6 +25,7 @@ public class GreedyAgriculturalSolver {
         this.rendimientoCultivo = rendimientoCultivo;
         this.precioCultivo = precioCultivo;
         this.costoMantCultivo = costoMantCultivo;
+        this.temporadaCultivo = temporadaCultivo;
         this.prioridad = prioridad;
     }
 
@@ -37,7 +39,7 @@ public class GreedyAgriculturalSolver {
         // Iterar sobre cada parcela y trimestre
         for (int parcela = 0; parcela < cantParcelas; parcela++) {
             for (int trimestre = 0; trimestre < cantTrimestres; trimestre++) {
-                int bestCrop = selectBestCrop(parcela, cropFrequency);
+                int bestCrop = selectBestCrop(parcela, trimestre, cropFrequency);
                 cropPlan[parcela][trimestre] = bestCrop;
 
                 // Calcular ganancia
@@ -52,42 +54,55 @@ public class GreedyAgriculturalSolver {
             }
         }
 
-        // Calcular diversidad
+     // Calcular diversidad usando el índice de Shannon
         double totalDiversityScore = 0.0;
-        for (int parcela = 0; parcela < cantParcelas; parcela++) {
-            double totalCultivos = 0;
-            for (int cultivo = 1; cultivo < cantCultivos; cultivo++) { // Ignorar "sin cultivo" (0)
-                totalCultivos += cropFrequency[parcela][cultivo];
-            }
+        double totalCultivosGlobal = 0.0;
+        int[] cultivoGlobalFrequencies = new int[cantCultivos];
 
-            if (totalCultivos > 0) {
-                double parcelDiversityScore = 0.0;
-                for (int cultivo = 1; cultivo < cantCultivos; cultivo++) {
-                    if (cropFrequency[parcela][cultivo] > 0) {
-                        double fk = cropFrequency[parcela][cultivo] / totalCultivos;
-                        parcelDiversityScore += fk * Math.log(fk);
-                    }
-                }
-                parcelDiversityScore = -parcelDiversityScore / Math.log(cantCultivos-1);
-                totalDiversityScore += parcelDiversityScore;
+        // Calcular la frecuencia total global de cada cultivo
+        for (int parcela = 0; parcela < cantParcelas; parcela++) {
+            for (int cultivo = 1; cultivo < cantCultivos; cultivo++) { // Ignorar "sin cultivo" (0)
+                cultivoGlobalFrequencies[cultivo] += cropFrequency[parcela][cultivo];
             }
         }
-        double normalizedDiversityScore = totalDiversityScore / cantParcelas;
 
-        return new Result(cropPlan, totalProfit, normalizedDiversityScore);
+        // Calcular el total global de cultivos sembrados
+        for (int cultivo = 1; cultivo < cantCultivos; cultivo++) {
+            totalCultivosGlobal += cultivoGlobalFrequencies[cultivo];
+        }
+
+        // Calcular índice de Shannon global
+        if (totalCultivosGlobal > 0) {
+            for (int cultivo = 1; cultivo < cantCultivos; cultivo++) {
+                if (cultivoGlobalFrequencies[cultivo] > 0) {
+                    double fk = cultivoGlobalFrequencies[cultivo] / totalCultivosGlobal;
+                    totalDiversityScore += fk * Math.log(fk);
+                }
+            }
+            totalDiversityScore = -totalDiversityScore / Math.log(totalCultivosGlobal);
+        }
+
+        return new Result(cropPlan, totalProfit, totalDiversityScore);
     }
 
-    private int selectBestCrop(int parcela, int[][] cropFrequency) {
+    private int selectBestCrop(int parcela, int trimestre, int[][] cropFrequency) {
         int bestCrop = 0; // 0 representa descanso
 
         if (prioridad.equals("ganancia")) {
             double maxProfit = Double.NEGATIVE_INFINITY;
             for (int cultivo = 0; cultivo < cantCultivos; cultivo++) {
-                double profit = areaParcelas[parcela] * (rendimientoCultivo[cultivo] * (precioCultivo[cultivo] - costoMantCultivo[cultivo]));
-                if (profit > maxProfit) {
-                    maxProfit = profit;
-                    bestCrop = cultivo;
-                }
+            	char temporada;
+            	if (trimestre % 2 == 0) 
+            		temporada = 'V';
+            	else 
+            		temporada = 'I';
+            	if (temporadaCultivo[cultivo] == temporada || temporadaCultivo[cultivo] == 'A') {
+	                double profit = areaParcelas[parcela] * (rendimientoCultivo[cultivo] * (precioCultivo[cultivo] - costoMantCultivo[cultivo]));
+	                if (profit > maxProfit) {
+	                    maxProfit = profit;
+	                    bestCrop = cultivo;
+	                }
+            	}
             }
         } else if (prioridad.equals("diversidad")) {
             double maxDiversityScore = Double.NEGATIVE_INFINITY;
@@ -101,10 +116,17 @@ public class GreedyAgriculturalSolver {
             }
 
             for (int cultivo = 1; cultivo < cantCultivos; cultivo++) { // Ignorar "sin cultivo" (0)
-                double diversityScore = -totalCropFrequency[cultivo]; // Menor frecuencia global = mayor diversidad
-                if (diversityScore > maxDiversityScore) {
-                    maxDiversityScore = diversityScore;
-                    bestCrop = cultivo;
+            	char temporada;
+            	if (trimestre % 2 == 0) 
+            		temporada = 'V';
+            	else 
+            		temporada = 'I';
+            	if (temporadaCultivo[cultivo] == temporada || temporadaCultivo[cultivo] == 'A') {
+	                double diversityScore = -totalCropFrequency[cultivo]; // Menor frecuencia global = mayor diversidad
+	                if (diversityScore > maxDiversityScore) {
+	                    maxDiversityScore = diversityScore;
+	                    bestCrop = cultivo;
+	                }
                 }
             }
         }

@@ -26,23 +26,23 @@ import java.util.List;
 
 public class Main extends AbstractAlgorithmRunner {
 	public static void main(String[] args) {
-	    String xmlFilePath = "src/main/resources/instancias/instancia_3.xml"; // Ruta del archivo XML
+	    String xmlFilePath = "src/main/resources/instancias/instancia_2.xml"; // Ruta del archivo XML
 	    AgriculturalData data = readDataFromXML(xmlFilePath);
 
 	    GreedyAgriculturalSolver solverProfit = new GreedyAgriculturalSolver(
 	        data.cantParcelas, data.cantTrimestres, data.cantCultivos, data.areaParcelas, 
-	        data.rendimientoCultivo, data.precioCultivo, data.costoMantCultivo, "ganancia");
+	        data.rendimientoCultivo, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo, "ganancia");
 	    Result cropPlanProfit = solverProfit.solve();
 
 	    GreedyAgriculturalSolver solverDiversity = new GreedyAgriculturalSolver(
 		        data.cantParcelas, data.cantTrimestres, data.cantCultivos, data.areaParcelas, 
-		        data.rendimientoCultivo, data.precioCultivo, data.costoMantCultivo, "diversidad");
+		        data.rendimientoCultivo, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo, "diversidad");
 	    Result cropPlanDiversity = solverDiversity.solve();
 
 	    // Crear la instancia del problema
 	    AgriculturalOptimizationProblem problem = new AgriculturalOptimizationProblem(
-	        data.cantParcelas, data.cantTrimestres, data.cantCultivos,
-	        data.areaParcelas, data.rendimientoCultivo, data.precioCultivo, data.costoMantCultivo
+	        data.cantParcelas, data.cantTrimestres, data.cantCultivos, data.areaParcelas,
+	        data.rendimientoCultivo, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo
 	    );
 
 	    // Inicializar población Greedy
@@ -57,7 +57,7 @@ public class Main extends AbstractAlgorithmRunner {
 	    double distributionIndex = 10.0;
 
 	    CrossoverOperator<IntegerSolution> crossover = new IntegerSBXCrossover(crossoverProbability, distributionIndex);
-	    MutationOperator<IntegerSolution> mutation = new IntegerPolynomialMutation(mutationProbability, distributionIndex);
+	    MutationOperator<IntegerSolution> mutation = new SeasonalIntegerMutation(mutationProbability, data.temporadaCultivo);
 
 	    // Crear y ejecutar NSGA-II
 	    Algorithm<List<IntegerSolution>> algorithm = new NSGAIIBuilder<>(
@@ -142,8 +142,9 @@ public class Main extends AbstractAlgorithmRunner {
             double[] rendimientoCultivo = parseArray(root.getElementsByTagName("rendimientoCultivo").item(0).getTextContent());
             double[] precioCultivo = parseArray(root.getElementsByTagName("precioCultivo").item(0).getTextContent());
             double[] costoMantCultivo = parseArray(root.getElementsByTagName("costoMantCultivo").item(0).getTextContent());
+            char[] temporadaCultivo = parseCharArray(root.getElementsByTagName("temporadaCultivo").item(0).getTextContent());
 
-            return new AgriculturalData(cantParcelas, cantTrimestres, cantCultivos, areaParcelas, rendimientoCultivo, precioCultivo, costoMantCultivo);
+            return new AgriculturalData(cantParcelas, cantTrimestres, cantCultivos, areaParcelas, rendimientoCultivo, precioCultivo, costoMantCultivo, temporadaCultivo);
 
         } catch (Exception e) {
             throw new RuntimeException("Error leyendo el archivo XML: " + e.getMessage(), e);
@@ -156,6 +157,14 @@ public class Main extends AbstractAlgorithmRunner {
                      .mapToDouble(Double::parseDouble)
                      .toArray();
     }
+    
+    private static char[] parseCharArray(String data) {
+        return Arrays.stream(data.split(","))
+                     .map(String::trim)
+                     .map(s -> s.charAt(0))
+                     .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                     .toString().toCharArray();
+    }
 
     private static class AgriculturalData {
         int cantParcelas;
@@ -165,8 +174,9 @@ public class Main extends AbstractAlgorithmRunner {
         double[] rendimientoCultivo;
         double[] precioCultivo;
         double[] costoMantCultivo;
+        char[] temporadaCultivo;
 
-        AgriculturalData(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo) {
+        AgriculturalData(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
             this.cantParcelas = cantParcelas;
             this.cantTrimestres = cantTrimestres;
             this.cantCultivos = cantCultivos;
@@ -174,6 +184,7 @@ public class Main extends AbstractAlgorithmRunner {
             this.rendimientoCultivo = rendimientoCultivo;
             this.precioCultivo = precioCultivo;
             this.costoMantCultivo = costoMantCultivo;
+            this.temporadaCultivo = temporadaCultivo;
         }
     }
 }
