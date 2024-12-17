@@ -20,7 +20,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
     private final char[] temporadaCultivo;
     
     // Auxiliares
-    private int[] cultivosVerano;
+    private final int[] cultivosVerano;
     private int indiceVerano;
     private final int[] cultivosInvierno;
     private int indiceInvierno;
@@ -78,6 +78,30 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
         // Convertir listaCultivosInvierno a un array de int
         this.cultivosInvierno = listaCultivosInvierno.stream().mapToInt(Integer::intValue).toArray();
 
+    }
+    
+    @Override
+    public IntegerSolution createSolution() {
+        IntegerSolution solution = super.createSolution();
+        Random random = new Random();
+
+        for (int i = 0; i < cantParcelas; i++) {
+            for (int t = 0; t < cantTrimestres; t++) {
+                int variableIndex = i * cantTrimestres + t;
+
+                // Determinar la temporada del trimestre: par = verano, impar = invierno
+                char temporadaTrimestre = (t % 2 == 0) ? 'V' : 'I';
+
+                // Asignar un cultivo válido según la temporada
+                if (temporadaTrimestre == 'V') {
+                    solution.setVariable(variableIndex, cultivosVerano[random.nextInt(cultivosVerano.length)]);
+                } else {
+                    solution.setVariable(variableIndex, cultivosInvierno[random.nextInt(cultivosInvierno.length)]);
+                }
+            }
+        }
+
+        return solution;
     }
     
     @Override
