@@ -18,6 +18,12 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
     private final double[] precioCultivo; // Precio de venta por cultivo en $/kg
     private final double[] costoMantCultivo; // Costo de mantenimiento por cultivo en $/ha
     private final char[] temporadaCultivo;
+    
+    // Auxiliares
+    private int[] cultivosVerano;
+    private int indiceVerano;
+    private final int[] cultivosInvierno;
+    private int indiceInvierno;
 
     public AgriculturalOptimizationProblem(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
         this.cantParcelas = cantParcelas;
@@ -44,6 +50,34 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
         }
 
         setVariableBounds(lowerLimit, upperLimit);
+        
+        // Auxiliares
+        this.indiceVerano = 0;
+        this.indiceInvierno = 0;
+        List<Integer> listaCultivosVerano = new ArrayList<>();
+        List<Integer> listaCultivosInvierno = new ArrayList<>();
+        for (int c = 0; c < cantCultivos; c++) {
+        	if (temporadaCultivo[c] == 'V') {
+        		listaCultivosVerano.add(c);
+        	} else if (temporadaCultivo[c] == 'I') {
+        		listaCultivosInvierno.add(c);
+        	} else {
+        		listaCultivosVerano.add(c);
+        		listaCultivosInvierno.add(c);
+        	}
+        }
+        // Ordenar listaCultivosVerano en base a precioCultivo
+        listaCultivosVerano.sort((a, b) -> Double.compare(precioCultivo[b], precioCultivo[a]));
+
+        // Ordenar listaCultivosInvierno en base a precioCultivo
+        listaCultivosInvierno.sort((a, b) -> Double.compare(precioCultivo[b], precioCultivo[a]));
+        
+        // Convertir listaCultivosVerano a un array de int
+        this.cultivosVerano = listaCultivosVerano.stream().mapToInt(Integer::intValue).toArray();
+
+        // Convertir listaCultivosInvierno a un array de int
+        this.cultivosInvierno = listaCultivosInvierno.stream().mapToInt(Integer::intValue).toArray();
+
     }
     
     @Override
@@ -147,15 +181,15 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
     }
     
     private int encontrarCultivoValido(char temporadaTrimestre) {
-        List<Integer> cultivosValidos = new ArrayList<>();
-        
-        // Recopilar todos los cultivos válidos
-        for (int cultivo = 0; cultivo < cantCultivos; cultivo++) {
-            if (esCultivoValido(cultivo, temporadaTrimestre)) {
-                cultivosValidos.add(cultivo);
-            }
-        }
-	    Random random = new Random();
-        return cultivosValidos.get(random.nextInt(cultivosValidos.size()));
+    	if (temporadaTrimestre == 'V') {
+    		int indice = this.indiceVerano;
+    		this.indiceVerano = (this.indiceVerano + 1) % this.cultivosVerano.length;
+    		return this.cultivosVerano[indice];
+    	} else {
+    		int indice = this.indiceInvierno;
+    		this.indiceInvierno = (this.indiceInvierno + 1) % this.cultivosInvierno.length;
+    		return this.cultivosInvierno[indice];
+    	}
     }
+    
 }
