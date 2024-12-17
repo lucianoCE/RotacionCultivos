@@ -59,30 +59,31 @@ public class GreedyAgriculturalSolver {
         double totalCultivosGlobal = 0.0;
         int[] cultivoGlobalFrequencies = new int[cantCultivos];
 
-        // Calcular la frecuencia total global de cada cultivo
-        for (int parcela = 0; parcela < cantParcelas; parcela++) {
-            for (int cultivo = 1; cultivo < cantCultivos; cultivo++) { // Ignorar "sin cultivo" (0)
-                cultivoGlobalFrequencies[cultivo] += cropFrequency[parcela][cultivo];
+        for (int i = 0; i < cantParcelas; i++) {
+            double totalCultivos = 0;  // Total de cultivos en la parcela i
+            for (int k = 1; k < cantCultivos; k++) {  // Empezar desde 1, ya que 0 significa "sin cultivo"
+                totalCultivos += cropFrequency[i][k];  // Sumar las frecuencias de cultivos
             }
-        }
 
-        // Calcular el total global de cultivos sembrados
-        for (int cultivo = 1; cultivo < cantCultivos; cultivo++) {
-            totalCultivosGlobal += cultivoGlobalFrequencies[cultivo];
-        }
-
-        // Calcular índice de Shannon global
-        if (totalCultivosGlobal > 0) {
-            for (int cultivo = 1; cultivo < cantCultivos; cultivo++) {
-                if (cultivoGlobalFrequencies[cultivo] > 0) {
-                    double fk = cultivoGlobalFrequencies[cultivo] / totalCultivosGlobal;
-                    totalDiversityScore += fk * Math.log(fk);
+            if (totalCultivos > 0) {  // Si la parcela tiene cultivos (no es 0)
+                double parcelDiversityScore = 0.0;  // Diversidad para esta parcela
+                for (int k = 1; k < cantCultivos; k++) {
+                    if (cropFrequency[i][k] > 0) {
+                        double fk = cropFrequency[i][k] / totalCultivos;  // Frecuencia relativa
+                        parcelDiversityScore += fk * Math.log(fk);
+                    }
                 }
+
+                // Normalizar la diversidad de esta parcela
+                parcelDiversityScore = -parcelDiversityScore / Math.log(cantCultivos-1);  // Dividir entre el logaritmo de los cultivos
+                totalDiversityScore += parcelDiversityScore;  // Sumar a la diversidad total
             }
-            totalDiversityScore = -totalDiversityScore / Math.log(totalCultivosGlobal);
         }
 
-        return new Result(cropPlan, totalProfit, totalDiversityScore);
+        // Promediar la diversidad de todas las parcelas
+        double normalizedDiversityScore = totalDiversityScore / cantParcelas;
+        
+        return new Result(cropPlan, totalProfit, normalizedDiversityScore);
     }
 
     private int selectBestCrop(int parcela, int trimestre, int[][] cropFrequency) {
