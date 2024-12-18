@@ -27,7 +27,7 @@ import java.util.List;
 
 public class Main extends AbstractAlgorithmRunner {
 	public static void main(String[] args) {
-	    String xmlFilePath = "src/main/resources/instancias/instancia_2.xml"; // Ruta del archivo XML
+	    String xmlFilePath = "src/main/resources/instancias/instancia_4.xml"; // Ruta del archivo XML
 	    AgriculturalData data = readDataFromXML(xmlFilePath);
 
 	    GreedyAgriculturalSolver solverProfit = new GreedyAgriculturalSolver(
@@ -93,7 +93,7 @@ public class Main extends AbstractAlgorithmRunner {
 	private static void saveSolutionsToCSV(String fileName, List<IntegerSolution> solutions, AgriculturalData data) {
 	    try (FileWriter writer = new FileWriter(fileName, false)) { // 'false' asegura sobrescritura
 	        // Escribir encabezado
-	        writer.append("Parcela,Trimestre,Cultivo,Ganancia\n");
+	        writer.append("Parcela,Trimestre,Cultivo\n");
 
 	        for (IntegerSolution solution : solutions) {
 	            double totalProfit = 0;
@@ -111,11 +111,11 @@ public class Main extends AbstractAlgorithmRunner {
 	                totalProfit += profit;
 
 	                // Escribir línea al CSV
-	                writer.append(String.format("%d,%d,%d,%.2f\n", parcela, trimestre, cultivo, profit));
+	                writer.append(String.format("%d,%d,%d\n", parcela, trimestre, cultivo));
 	            }
 
 	            // Escribir ganancia total al final de la solución
-	            writer.append(String.format(",,Total Profit,%.2f\n", totalProfit));
+	            writer.append(String.format("Total Profit,%.2f\n", totalProfit));
 	        }
 	    } catch (IOException e) {
 	        System.err.println("Error al escribir el archivo CSV: " + e.getMessage());
