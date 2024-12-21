@@ -15,7 +15,9 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
     private final int cantTrimestres; // Número de trimestres
     private final int cantCultivos; // Tipos de cultivos
     private final double[] areaParcelas; // Vector de áreas de parcelas
-    private final double[] rendimientoCultivo; // Rendimiento por cultivo en kg/ha
+    private final double[] rendimientoCultivoChico; // Rendimiento por cultivo en kg/ha
+    private final double[] rendimientoCultivoMediano; // Rendimiento por cultivo en kg/ha
+    private final double[] rendimientoCultivoGrande; // Rendimiento por cultivo en kg/ha
     private final double[] precioCultivo; // Precio de venta por cultivo en $/kg
     private final double[] costoMantCultivo; // Costo de mantenimiento por cultivo en $/ha
     private final char[] temporadaCultivo;
@@ -26,13 +28,15 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
     private final int[] cultivosInvierno;
     private int indiceInvierno;
 
-    public AgriculturalOptimizationProblem(int cantParcelas, int cantFilas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
+    public AgriculturalOptimizationProblem(int cantParcelas, int cantFilas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivoChico, double[] rendimientoCultivoMediano, double[] rendimientoCultivoGrande, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
         this.cantParcelas = cantParcelas;
         this.cantFilas = cantFilas;
         this.cantTrimestres = cantTrimestres;
         this.cantCultivos = cantCultivos;
         this.areaParcelas = areaParcelas;
-        this.rendimientoCultivo = rendimientoCultivo;
+        this.rendimientoCultivoChico = rendimientoCultivoChico;
+        this.rendimientoCultivoMediano = rendimientoCultivoMediano;
+        this.rendimientoCultivoGrande = rendimientoCultivoGrande;
         this.precioCultivo = precioCultivo;
         this.costoMantCultivo = costoMantCultivo;
         this.temporadaCultivo = temporadaCultivo;
@@ -128,8 +132,18 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
         for (int i = 0; i < cantParcelas; i++) {
             for (int t = 0; t < cantTrimestres; t++) {
                 int crop = cropPlan[i][t]; // Tipo de cultivo plantado en la parcela i en el trimestre t.
+                double area = areaParcelas[i];
+                double rendimiento;
+                if (area <= 200.0) {
+                	rendimiento = rendimientoCultivoChico[crop];
+                }else {
+                	if (area <= 500.0)
+                		rendimiento = rendimientoCultivoMediano[crop];
+                	else 
+                		rendimiento = rendimientoCultivoGrande[crop];
+                }
                 if (crop > 0) { // Si no está en descanso
-                    totalProfit += areaParcelas[i] * (rendimientoCultivo[crop] * (precioCultivo[crop] - costoMantCultivo[crop]));
+                    totalProfit += area * (rendimiento * (precioCultivo[crop] - costoMantCultivo[crop]));
                 } else {
                 	totalProfit -= costoMantCultivo[crop];
                 }

@@ -11,18 +11,22 @@ public class GreedyAgriculturalSolver {
     private final int cantTrimestres;
     private final int cantCultivos;
     private final double[] areaParcelas;
-    private final double[] rendimientoCultivo;
+    private final double[] rendimientoCultivoChico;
+    private final double[] rendimientoCultivoMediano;
+    private final double[] rendimientoCultivoGrande;
     private final double[] precioCultivo;
     private final double[] costoMantCultivo;
     private final char[] temporadaCultivo;
     private final String prioridad; // "ganancia" o "diversidad"
 
-    public GreedyAgriculturalSolver(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo, String prioridad) {
+    public GreedyAgriculturalSolver(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivoChico, double[] rendimientoCultivoMediano, double[] rendimientoCultivoGrande, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo, String prioridad) {
         this.cantParcelas = cantParcelas;
         this.cantTrimestres = cantTrimestres;
         this.cantCultivos = cantCultivos;
         this.areaParcelas = areaParcelas;
-        this.rendimientoCultivo = rendimientoCultivo;
+        this.rendimientoCultivoChico = rendimientoCultivoChico;
+        this.rendimientoCultivoMediano = rendimientoCultivoMediano;
+        this.rendimientoCultivoGrande = rendimientoCultivoGrande;
         this.precioCultivo = precioCultivo;
         this.costoMantCultivo = costoMantCultivo;
         this.temporadaCultivo = temporadaCultivo;
@@ -41,10 +45,19 @@ public class GreedyAgriculturalSolver {
             for (int trimestre = 0; trimestre < cantTrimestres; trimestre++) {
                 int bestCrop = selectBestCrop(parcela, trimestre, cropFrequency);
                 cropPlan[parcela][trimestre] = bestCrop;
-
+                double area = areaParcelas[parcela];
+                double rendimiento;
+                if (area <= 200.0) {
+                	rendimiento = rendimientoCultivoChico[bestCrop];
+                }else {
+                	if (area <= 500.0)
+                		rendimiento = rendimientoCultivoMediano[bestCrop];
+                	else 
+                		rendimiento = rendimientoCultivoGrande[bestCrop];
+                }
                 // Calcular ganancia
                 if (bestCrop > 0) { // Si no está en descanso
-                    totalProfit += areaParcelas[parcela] * (rendimientoCultivo[bestCrop] * (precioCultivo[bestCrop] - costoMantCultivo[bestCrop]));
+                    totalProfit += area * (rendimiento * (precioCultivo[bestCrop] - costoMantCultivo[bestCrop]));
                 }
 
                 // Actualizar frecuencia del cultivo
@@ -98,7 +111,17 @@ public class GreedyAgriculturalSolver {
             	else 
             		temporada = 'I';
             	if (temporadaCultivo[cultivo] == temporada || temporadaCultivo[cultivo] == 'A') {
-	                double profit = areaParcelas[parcela] * (rendimientoCultivo[cultivo] * (precioCultivo[cultivo] - costoMantCultivo[cultivo]));
+            		double area = areaParcelas[parcela];
+                    double rendimiento;
+                    if (area <= 200.0) {
+                    	rendimiento = rendimientoCultivoChico[cultivo];
+                    }else {
+                    	if (area <= 500.0)
+                    		rendimiento = rendimientoCultivoMediano[cultivo];
+                    	else 
+                    		rendimiento = rendimientoCultivoGrande[cultivo];
+                    }
+	                double profit = areaParcelas[parcela] * (rendimiento * (precioCultivo[cultivo] - costoMantCultivo[cultivo]));
 	                if (profit > maxProfit) {
 	                    maxProfit = profit;
 	                    bestCrop = cultivo;

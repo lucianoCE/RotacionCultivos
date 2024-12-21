@@ -32,18 +32,18 @@ public class Main extends AbstractAlgorithmRunner {
 
 	    GreedyAgriculturalSolver solverProfit = new GreedyAgriculturalSolver(
 	        data.cantParcelas, data.cantTrimestres, data.cantCultivos, data.areaParcelas, 
-	        data.rendimientoCultivo, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo, "ganancia");
+	        data.rendimientoCultivoChico, data.rendimientoCultivoMediano, data.rendimientoCultivoGrande, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo, "ganancia");
 	    Result cropPlanProfit = solverProfit.solve();
 
 	    GreedyAgriculturalSolver solverDiversity = new GreedyAgriculturalSolver(
 		        data.cantParcelas, data.cantTrimestres, data.cantCultivos, data.areaParcelas, 
-		        data.rendimientoCultivo, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo, "diversidad");
+		        data.rendimientoCultivoChico, data.rendimientoCultivoMediano, data.rendimientoCultivoGrande, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo, "diversidad");
 	    Result cropPlanDiversity = solverDiversity.solve();
 
 	    // Crear la instancia del problema
 	    AgriculturalOptimizationProblem problem = new AgriculturalOptimizationProblem(
 	        data.cantParcelas, data.cantFilas, data.cantTrimestres, data.cantCultivos, data.areaParcelas,
-	        data.rendimientoCultivo, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo
+	        data.rendimientoCultivoChico, data.rendimientoCultivoMediano, data.rendimientoCultivoGrande, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo
 	    );
 
 	    // Inicializar población Greedy
@@ -105,8 +105,18 @@ public class Main extends AbstractAlgorithmRunner {
 	                int cultivo = solution.getVariable(i);
 
 	                // Calcular ganancia
-	                double profit = data.areaParcelas[parcela] *
-	                                (data.rendimientoCultivo[cultivo] *
+	                double area = data.areaParcelas[parcela];
+	                double rendimiento;
+	                if (area <= 200.0) {
+	                	rendimiento = data.rendimientoCultivoChico[cultivo];
+	                }else {
+	                	if (area <= 500.0)
+	                		rendimiento = data.rendimientoCultivoMediano[cultivo];
+	                	else 
+	                		rendimiento = data.rendimientoCultivoGrande[cultivo];
+	                }
+	                double profit = area *
+	                                (rendimiento *
 	                                (data.precioCultivo[cultivo] - data.costoMantCultivo[cultivo]));
 	                totalProfit += profit;
 
@@ -141,12 +151,14 @@ public class Main extends AbstractAlgorithmRunner {
             int cantCultivos = Integer.parseInt(root.getElementsByTagName("cantCultivos").item(0).getTextContent());
 
             double[] areaParcelas = parseArray(root.getElementsByTagName("areaParcelas").item(0).getTextContent());
-            double[] rendimientoCultivo = parseArray(root.getElementsByTagName("rendimientoCultivo").item(0).getTextContent());
+            double[] rendimientoCultivoChico = parseArray(root.getElementsByTagName("rendimientoCultivoChico").item(0).getTextContent());
+            double[] rendimientoCultivoMediano = parseArray(root.getElementsByTagName("rendimientoCultivoMediano").item(0).getTextContent());
+            double[] rendimientoCultivoGrande = parseArray(root.getElementsByTagName("rendimientoCultivoGrande").item(0).getTextContent());
             double[] precioCultivo = parseArray(root.getElementsByTagName("precioCultivo").item(0).getTextContent());
             double[] costoMantCultivo = parseArray(root.getElementsByTagName("costoMantCultivo").item(0).getTextContent());
             char[] temporadaCultivo = parseCharArray(root.getElementsByTagName("temporadaCultivo").item(0).getTextContent());
 
-            return new AgriculturalData(cantParcelas, cantFilas, cantTrimestres, cantCultivos, areaParcelas, rendimientoCultivo, precioCultivo, costoMantCultivo, temporadaCultivo);
+            return new AgriculturalData(cantParcelas, cantFilas, cantTrimestres, cantCultivos, areaParcelas, rendimientoCultivoChico, rendimientoCultivoMediano, rendimientoCultivoGrande, precioCultivo, costoMantCultivo, temporadaCultivo);
 
         } catch (Exception e) {
             throw new RuntimeException("Error leyendo el archivo XML: " + e.getMessage(), e);
@@ -174,18 +186,22 @@ public class Main extends AbstractAlgorithmRunner {
         int cantTrimestres;
         int cantCultivos;
         double[] areaParcelas;
-        double[] rendimientoCultivo;
+        double[] rendimientoCultivoChico;
+        double[] rendimientoCultivoMediano;
+        double[] rendimientoCultivoGrande;
         double[] precioCultivo;
         double[] costoMantCultivo;
         char[] temporadaCultivo;
 
-        AgriculturalData(int cantParcelas, int cantFilas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
+        AgriculturalData(int cantParcelas, int cantFilas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivoChico, double[] rendimientoCultivoMediano, double[] rendimientoCultivoGrande, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
             this.cantParcelas = cantParcelas;
             this.cantFilas = cantFilas;
             this.cantTrimestres = cantTrimestres;
             this.cantCultivos = cantCultivos;
             this.areaParcelas = areaParcelas;
-            this.rendimientoCultivo = rendimientoCultivo;
+            this.rendimientoCultivoChico = rendimientoCultivoChico;
+            this.rendimientoCultivoMediano = rendimientoCultivoMediano;
+            this.rendimientoCultivoGrande = rendimientoCultivoGrande;
             this.precioCultivo = precioCultivo;
             this.costoMantCultivo = costoMantCultivo;
             this.temporadaCultivo = temporadaCultivo;
