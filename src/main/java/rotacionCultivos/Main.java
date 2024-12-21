@@ -42,7 +42,7 @@ public class Main extends AbstractAlgorithmRunner {
 
 	    // Crear la instancia del problema
 	    AgriculturalOptimizationProblem problem = new AgriculturalOptimizationProblem(
-	        data.cantParcelas, data.cantTrimestres, data.cantCultivos, data.areaParcelas,
+	        data.cantParcelas, data.cantFilas, data.cantTrimestres, data.cantCultivos, data.areaParcelas,
 	        data.rendimientoCultivo, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo
 	    );
 
@@ -58,7 +58,7 @@ public class Main extends AbstractAlgorithmRunner {
 	    double distributionIndex = 10.0;
 
 	    CrossoverOperator<IntegerSolution> crossover = new IntegerSBXCrossover(crossoverProbability, distributionIndex);
-	    MutationOperator<IntegerSolution> mutation = new SeasonalIntegerMutation(mutationProbability, data.temporadaCultivo);
+	    MutationOperator<IntegerSolution> mutation = new SeasonalIntegerMutation(mutationProbability, data.cantParcelas, data.cantFilas, data.temporadaCultivo);
 
 	    // Crear y ejecutar NSGA-II
 	    Algorithm<List<IntegerSolution>> algorithm = new NSGAIIBuilder<>(
@@ -136,6 +136,7 @@ public class Main extends AbstractAlgorithmRunner {
 
             // Leer los datos desde el XML
             int cantParcelas = Integer.parseInt(root.getElementsByTagName("cantParcelas").item(0).getTextContent());
+            int cantFilas = Integer.parseInt(root.getElementsByTagName("cantFilas").item(0).getTextContent());
             int cantTrimestres = Integer.parseInt(root.getElementsByTagName("cantTrimestres").item(0).getTextContent());
             int cantCultivos = Integer.parseInt(root.getElementsByTagName("cantCultivos").item(0).getTextContent());
 
@@ -145,7 +146,7 @@ public class Main extends AbstractAlgorithmRunner {
             double[] costoMantCultivo = parseArray(root.getElementsByTagName("costoMantCultivo").item(0).getTextContent());
             char[] temporadaCultivo = parseCharArray(root.getElementsByTagName("temporadaCultivo").item(0).getTextContent());
 
-            return new AgriculturalData(cantParcelas, cantTrimestres, cantCultivos, areaParcelas, rendimientoCultivo, precioCultivo, costoMantCultivo, temporadaCultivo);
+            return new AgriculturalData(cantParcelas, cantFilas, cantTrimestres, cantCultivos, areaParcelas, rendimientoCultivo, precioCultivo, costoMantCultivo, temporadaCultivo);
 
         } catch (Exception e) {
             throw new RuntimeException("Error leyendo el archivo XML: " + e.getMessage(), e);
@@ -169,6 +170,7 @@ public class Main extends AbstractAlgorithmRunner {
 
     private static class AgriculturalData {
         int cantParcelas;
+        int cantFilas;
         int cantTrimestres;
         int cantCultivos;
         double[] areaParcelas;
@@ -177,8 +179,9 @@ public class Main extends AbstractAlgorithmRunner {
         double[] costoMantCultivo;
         char[] temporadaCultivo;
 
-        AgriculturalData(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
+        AgriculturalData(int cantParcelas, int cantFilas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
             this.cantParcelas = cantParcelas;
+            this.cantFilas = cantFilas;
             this.cantTrimestres = cantTrimestres;
             this.cantCultivos = cantCultivos;
             this.areaParcelas = areaParcelas;

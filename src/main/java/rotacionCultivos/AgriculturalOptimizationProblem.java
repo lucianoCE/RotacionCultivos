@@ -11,6 +11,7 @@ import java.util.Random;
 public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
 	
 	private final int cantParcelas; // cantParcelasúmero de parcelas
+	private final int cantFilas;
     private final int cantTrimestres; // Número de trimestres
     private final int cantCultivos; // Tipos de cultivos
     private final double[] areaParcelas; // Vector de áreas de parcelas
@@ -25,8 +26,9 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
     private final int[] cultivosInvierno;
     private int indiceInvierno;
 
-    public AgriculturalOptimizationProblem(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
+    public AgriculturalOptimizationProblem(int cantParcelas, int cantFilas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivo, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
         this.cantParcelas = cantParcelas;
+        this.cantFilas = cantFilas;
         this.cantTrimestres = cantTrimestres;
         this.cantCultivos = cantCultivos;
         this.areaParcelas = areaParcelas;
