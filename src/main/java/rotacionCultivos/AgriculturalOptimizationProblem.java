@@ -195,7 +195,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
     
     private void repairSolution(IntegerSolution solution) {
         for (int i = 0; i < cantParcelas; i++) {
-            for (int t = 0; t < cantSemestres; t++) {
+			for (int t = 0; t < cantSemestres; t++) {
                 int variableIndex = i * cantSemestres + t;
                 int cultivo = solution.getVariable(variableIndex); // Cultivo actual asignado
 

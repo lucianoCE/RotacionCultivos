@@ -5,8 +5,6 @@ import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.IntegerSBXCrossover;
 import org.uma.jmetal.operator.mutation.MutationOperator;
-import org.uma.jmetal.operator.mutation.impl.IntegerPolynomialMutation;
-import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 import org.uma.jmetal.util.AbstractAlgorithmRunner;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
@@ -79,12 +77,17 @@ public class Main extends AbstractAlgorithmRunner {
 	    
 	    System.out.print("Greedy diversidad: ");
 	    System.out.println(greedyDiversityResult);
-	    saveSolutionsToCSV("greedy_diversity_results.csv", greedyDiversityResult, data);
 	    System.out.print("Greedy ganancia: ");
 	    System.out.println(greedyProfitResult);
-	    saveSolutionsToCSV("greedy_profit_results.csv", greedyProfitResult, data);
+	    
 
-	    System.out.println("Resultados guardados en archivos CSV.");
+	    System.out.println("Guardando resultados greedy de ganancia...");
+	    ExcelExporter.saveSolutionsToExcel("greedy_profit_results.xlsx", greedyProfitResult, data);
+	    System.out.println("Guardando resultados greedy de diversidad...");
+	    ExcelExporter.saveSolutionsToExcel("greedy_diversity_results.xlsx", greedyDiversityResult, data);
+	    System.out.println("Guardando resultados algoritmo evolutivo...");
+	    ExcelExporter.saveSolutionsToExcel("AE_results.xlsx", population, data);
+	    System.out.println("Todos los resutados se guardaron correctamente.");
 	}
 
 	/**
@@ -180,7 +183,7 @@ public class Main extends AbstractAlgorithmRunner {
                      .toString().toCharArray();
     }
 
-    private static class AgriculturalData {
+    public static class AgriculturalData {
         int cantParcelas;
         int cantFilas;
         int cantSemestres;
