@@ -31,18 +31,18 @@ public class Main extends AbstractAlgorithmRunner {
 	    AgriculturalData data = readDataFromXML(xmlFilePath);
 
 	    GreedyAgriculturalSolver solverProfit = new GreedyAgriculturalSolver(
-	        data.cantParcelas, data.cantTrimestres, data.cantCultivos, data.areaParcelas, 
+	        data.cantParcelas, data.cantSemestres, data.cantCultivos, data.areaParcelas, 
 	        data.rendimientoCultivoChico, data.rendimientoCultivoMediano, data.rendimientoCultivoGrande, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo, "ganancia");
 	    Result cropPlanProfit = solverProfit.solve();
 
 	    GreedyAgriculturalSolver solverDiversity = new GreedyAgriculturalSolver(
-		        data.cantParcelas, data.cantTrimestres, data.cantCultivos, data.areaParcelas, 
+		        data.cantParcelas, data.cantSemestres, data.cantCultivos, data.areaParcelas, 
 		        data.rendimientoCultivoChico, data.rendimientoCultivoMediano, data.rendimientoCultivoGrande, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo, "diversidad");
 	    Result cropPlanDiversity = solverDiversity.solve();
 
 	    // Crear la instancia del problema
 	    AgriculturalOptimizationProblem problem = new AgriculturalOptimizationProblem(
-	        data.cantParcelas, data.cantFilas, data.cantTrimestres, data.cantCultivos, data.areaParcelas,
+	        data.cantParcelas, data.cantFilas, data.cantSemestres, data.cantCultivos, data.areaParcelas,
 	        data.rendimientoCultivoChico, data.rendimientoCultivoMediano, data.rendimientoCultivoGrande, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo
 	    );
 
@@ -93,15 +93,15 @@ public class Main extends AbstractAlgorithmRunner {
 	private static void saveSolutionsToCSV(String fileName, List<IntegerSolution> solutions, AgriculturalData data) {
 	    try (FileWriter writer = new FileWriter(fileName, false)) { // 'false' asegura sobrescritura
 	        // Escribir encabezado
-	        writer.append("Parcela,Trimestre,Cultivo\n");
+	        writer.append("Parcela,Semestre,Cultivo\n");
 
 	        for (IntegerSolution solution : solutions) {
 	            double totalProfit = 0;
-	            int variableCount = data.cantParcelas * data.cantTrimestres;
+	            int variableCount = data.cantParcelas * data.cantSemestres;
 
 	            for (int i = 0; i < variableCount; i++) {
-	                int parcela = i / data.cantTrimestres;
-	                int trimestre = i % data.cantTrimestres;
+	                int parcela = i / data.cantSemestres;
+	                int semestre = i % data.cantSemestres;
 	                int cultivo = solution.getVariable(i);
 
 	                // Calcular ganancia
@@ -121,7 +121,7 @@ public class Main extends AbstractAlgorithmRunner {
 	                totalProfit += profit;
 
 	                // Escribir línea al CSV
-	                writer.append(String.format("%d,%d,%d\n", parcela, trimestre, cultivo));
+	                writer.append(String.format("%d,%d,%d\n", parcela, semestre, cultivo));
 	            }
 
 	            // Escribir ganancia total al final de la solución
@@ -147,7 +147,7 @@ public class Main extends AbstractAlgorithmRunner {
             // Leer los datos desde el XML
             int cantParcelas = Integer.parseInt(root.getElementsByTagName("cantParcelas").item(0).getTextContent());
             int cantFilas = Integer.parseInt(root.getElementsByTagName("cantFilas").item(0).getTextContent());
-            int cantTrimestres = Integer.parseInt(root.getElementsByTagName("cantTrimestres").item(0).getTextContent());
+            int cantSemestres = Integer.parseInt(root.getElementsByTagName("cantSemestres").item(0).getTextContent());
             int cantCultivos = Integer.parseInt(root.getElementsByTagName("cantCultivos").item(0).getTextContent());
 
             double[] areaParcelas = parseArray(root.getElementsByTagName("areaParcelas").item(0).getTextContent());
@@ -158,7 +158,7 @@ public class Main extends AbstractAlgorithmRunner {
             double[] costoMantCultivo = parseArray(root.getElementsByTagName("costoMantCultivo").item(0).getTextContent());
             char[] temporadaCultivo = parseCharArray(root.getElementsByTagName("temporadaCultivo").item(0).getTextContent());
 
-            return new AgriculturalData(cantParcelas, cantFilas, cantTrimestres, cantCultivos, areaParcelas, rendimientoCultivoChico, rendimientoCultivoMediano, rendimientoCultivoGrande, precioCultivo, costoMantCultivo, temporadaCultivo);
+            return new AgriculturalData(cantParcelas, cantFilas, cantSemestres, cantCultivos, areaParcelas, rendimientoCultivoChico, rendimientoCultivoMediano, rendimientoCultivoGrande, precioCultivo, costoMantCultivo, temporadaCultivo);
 
         } catch (Exception e) {
             throw new RuntimeException("Error leyendo el archivo XML: " + e.getMessage(), e);
@@ -183,7 +183,7 @@ public class Main extends AbstractAlgorithmRunner {
     private static class AgriculturalData {
         int cantParcelas;
         int cantFilas;
-        int cantTrimestres;
+        int cantSemestres;
         int cantCultivos;
         double[] areaParcelas;
         double[] rendimientoCultivoChico;
@@ -193,10 +193,10 @@ public class Main extends AbstractAlgorithmRunner {
         double[] costoMantCultivo;
         char[] temporadaCultivo;
 
-        AgriculturalData(int cantParcelas, int cantFilas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivoChico, double[] rendimientoCultivoMediano, double[] rendimientoCultivoGrande, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
+        AgriculturalData(int cantParcelas, int cantFilas, int cantSemestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivoChico, double[] rendimientoCultivoMediano, double[] rendimientoCultivoGrande, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
             this.cantParcelas = cantParcelas;
             this.cantFilas = cantFilas;
-            this.cantTrimestres = cantTrimestres;
+            this.cantSemestres = cantSemestres;
             this.cantCultivos = cantCultivos;
             this.areaParcelas = areaParcelas;
             this.rendimientoCultivoChico = rendimientoCultivoChico;

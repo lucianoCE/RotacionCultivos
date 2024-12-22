@@ -8,7 +8,7 @@ import java.util.List;
 public class GreedyAgriculturalSolver {
 
     private final int cantParcelas;
-    private final int cantTrimestres;
+    private final int cantSemestres;
     private final int cantCultivos;
     private final double[] areaParcelas;
     private final double[] rendimientoCultivoChico;
@@ -19,9 +19,9 @@ public class GreedyAgriculturalSolver {
     private final char[] temporadaCultivo;
     private final String prioridad; // "ganancia" o "diversidad"
 
-    public GreedyAgriculturalSolver(int cantParcelas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivoChico, double[] rendimientoCultivoMediano, double[] rendimientoCultivoGrande, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo, String prioridad) {
+    public GreedyAgriculturalSolver(int cantParcelas, int cantSemestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivoChico, double[] rendimientoCultivoMediano, double[] rendimientoCultivoGrande, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo, String prioridad) {
         this.cantParcelas = cantParcelas;
-        this.cantTrimestres = cantTrimestres;
+        this.cantSemestres = cantSemestres;
         this.cantCultivos = cantCultivos;
         this.areaParcelas = areaParcelas;
         this.rendimientoCultivoChico = rendimientoCultivoChico;
@@ -34,17 +34,17 @@ public class GreedyAgriculturalSolver {
     }
 
     public Result solve() {
-        int[][] cropPlan = new int[cantParcelas][cantTrimestres];
+        int[][] cropPlan = new int[cantParcelas][cantSemestres];
         double totalProfit = 0.0;
 
         // Crear matriz para frecuencias de cultivos
         int[][] cropFrequency = new int[cantParcelas][cantCultivos];
 
-        // Iterar sobre cada parcela y trimestre
+        // Iterar sobre cada parcela y semestre
         for (int parcela = 0; parcela < cantParcelas; parcela++) {
-            for (int trimestre = 0; trimestre < cantTrimestres; trimestre++) {
-                int bestCrop = selectBestCrop(parcela, trimestre, cropFrequency);
-                cropPlan[parcela][trimestre] = bestCrop;
+            for (int semestre = 0; semestre < cantSemestres; semestre++) {
+                int bestCrop = selectBestCrop(parcela, semestre, cropFrequency);
+                cropPlan[parcela][semestre] = bestCrop;
                 double area = areaParcelas[parcela];
                 double rendimiento;
                 if (area <= 200.0) {
@@ -99,14 +99,14 @@ public class GreedyAgriculturalSolver {
         return new Result(cropPlan, totalProfit, normalizedDiversityScore);
     }
 
-    private int selectBestCrop(int parcela, int trimestre, int[][] cropFrequency) {
+    private int selectBestCrop(int parcela, int semestre, int[][] cropFrequency) {
         int bestCrop = 0; // 0 representa descanso
 
         if (prioridad.equals("ganancia")) {
             double maxProfit = Double.NEGATIVE_INFINITY;
             for (int cultivo = 0; cultivo < cantCultivos; cultivo++) {
             	char temporada;
-            	if (trimestre % 2 == 0) 
+            	if (semestre % 2 == 0) 
             		temporada = 'V';
             	else 
             		temporada = 'I';
@@ -141,7 +141,7 @@ public class GreedyAgriculturalSolver {
 
             for (int cultivo = 1; cultivo < cantCultivos; cultivo++) { // Ignorar "sin cultivo" (0)
             	char temporada;
-            	if (trimestre % 2 == 0) 
+            	if (semestre % 2 == 0) 
             		temporada = 'V';
             	else 
             		temporada = 'I';
@@ -165,8 +165,8 @@ public class GreedyAgriculturalSolver {
 
         // Mapear cropPlan (2D) a un vector unidimensional en IntegerSolution
         for (int i = 0; i < cantParcelas; i++) {
-            for (int t = 0; t < cantTrimestres; t++) {
-                int variableIndex = i * cantTrimestres + t;
+            for (int t = 0; t < cantSemestres; t++) {
+                int variableIndex = i * cantSemestres + t;
                 solution.setVariable(variableIndex, cropPlan[i][t]);
             }
         }

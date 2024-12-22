@@ -1,6 +1,6 @@
 <datos>
     <cantParcelas>5</cantParcelas>
-    <cantTrimestres>4</cantTrimestres>
+    <cantSemestres>4</cantSemestres>
     <cantCultivos>5</cantCultivos>
     <areaParcelas>1.0, 1.5, 1.2, 1.3, 1.1</areaParcelas>
     <rendimientoCultivo>0.0, 15.0, 12.0, 17.0, 10.0</rendimientoCultivo>

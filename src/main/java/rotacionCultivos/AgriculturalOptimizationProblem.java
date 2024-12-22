@@ -12,7 +12,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
 	
 	private final int cantParcelas; // cantParcelasúmero de parcelas
 	private final int cantFilas;
-    private final int cantTrimestres; // Número de trimestres
+    private final int cantSemestres; // Número de semestres
     private final int cantCultivos; // Tipos de cultivos
     private final double[] areaParcelas; // Vector de áreas de parcelas
     private final double[] rendimientoCultivoChico; // Rendimiento por cultivo en kg/ha
@@ -28,10 +28,10 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
     private final int[] cultivosInvierno;
     private int indiceInvierno;
 
-    public AgriculturalOptimizationProblem(int cantParcelas, int cantFilas, int cantTrimestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivoChico, double[] rendimientoCultivoMediano, double[] rendimientoCultivoGrande, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
+    public AgriculturalOptimizationProblem(int cantParcelas, int cantFilas, int cantSemestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivoChico, double[] rendimientoCultivoMediano, double[] rendimientoCultivoGrande, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
         this.cantParcelas = cantParcelas;
         this.cantFilas = cantFilas;
-        this.cantTrimestres = cantTrimestres;
+        this.cantSemestres = cantSemestres;
         this.cantCultivos = cantCultivos;
         this.areaParcelas = areaParcelas;
         this.rendimientoCultivoChico = rendimientoCultivoChico;
@@ -41,8 +41,8 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
         this.costoMantCultivo = costoMantCultivo;
         this.temporadaCultivo = temporadaCultivo;
 
-        // Definir el número de variables (cantParcelas*cantTrimestres) y sus límites
-        setNumberOfVariables(cantParcelas * cantTrimestres);
+        // Definir el número de variables (cantParcelas*cantSemestres) y sus límites
+        setNumberOfVariables(cantParcelas * cantSemestres);
         setNumberOfObjectives(2); // Maximizar rendimiento y diversidad
         setName("AgriculturalOptimizationProblem");
 
@@ -92,14 +92,14 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
         Random random = new Random();
 
         for (int i = 0; i < cantParcelas; i++) {
-            for (int t = 0; t < cantTrimestres; t++) {
-                int variableIndex = i * cantTrimestres + t;
+            for (int t = 0; t < cantSemestres; t++) {
+                int variableIndex = i * cantSemestres + t;
 
-                // Determinar la temporada del trimestre: par = verano, impar = invierno
-                char temporadaTrimestre = (t % 2 == 0) ? 'V' : 'I';
+                // Determinar la temporada del semestre: par = verano, impar = invierno
+                char temporadaSemestre = (t % 2 == 0) ? 'V' : 'I';
 
                 // Asignar un cultivo válido según la temporada
-                if (temporadaTrimestre == 'V') {
+                if (temporadaSemestre == 'V') {
                     solution.setVariable(variableIndex, cultivosVerano[random.nextInt(cultivosVerano.length)]);
                 } else {
                     solution.setVariable(variableIndex, cultivosInvierno[random.nextInt(cultivosInvierno.length)]);
@@ -118,20 +118,20 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
         double totalDiversityScore = 0.0; // Almacena la diversidad total
 
         // Matriz de cultivos asignados
-        int[][] cropPlan = new int[cantParcelas][cantTrimestres];
+        int[][] cropPlan = new int[cantParcelas][cantSemestres];
 
         // Mapeo de variables de la solución a la matriz cropPlan
         for (int i = 0; i < cantParcelas; i++) {
-            for (int t = 0; t < cantTrimestres; t++) {
-                int variableIndex = i * cantTrimestres + t; // Cálculo del índice de la variable
+            for (int t = 0; t < cantSemestres; t++) {
+                int variableIndex = i * cantSemestres + t; // Cálculo del índice de la variable
                 cropPlan[i][t] = solution.getVariable(variableIndex); // Asignación de la variable
             }
         }
 
         // Calcular el rendimiento total (función CT)
         for (int i = 0; i < cantParcelas; i++) {
-            for (int t = 0; t < cantTrimestres; t++) {
-                int crop = cropPlan[i][t]; // Tipo de cultivo plantado en la parcela i en el trimestre t.
+            for (int t = 0; t < cantSemestres; t++) {
+                int crop = cropPlan[i][t]; // Tipo de cultivo plantado en la parcela i en el semestre t.
                 double area = areaParcelas[i];
                 double rendimiento;
                 if (area <= 200.0) {
@@ -158,7 +158,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
 
         // Calcular las frecuencias absolutas, excluyendo las parcelas sin cultivo
         for (int i = 0; i < cantParcelas; i++) { 
-            for (int t = 0; t < cantTrimestres; t++) {
+            for (int t = 0; t < cantSemestres; t++) {
                 if (cropPlan[i][t] > 0) { // Ignorar parcelas sin cultivo (0)
                     cropFrequency[i][cropPlan[i][t]] += 1;
                 }
@@ -195,33 +195,33 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
     
     private void repairSolution(IntegerSolution solution) {
         for (int i = 0; i < cantParcelas; i++) {
-            for (int t = 0; t < cantTrimestres; t++) {
-                int variableIndex = i * cantTrimestres + t;
+            for (int t = 0; t < cantSemestres; t++) {
+                int variableIndex = i * cantSemestres + t;
                 int cultivo = solution.getVariable(variableIndex); // Cultivo actual asignado
 
-                // Obtener la temporada del trimestre: par = verano ('V'), impar = invierno ('I')
-                char temporadaTrimestre = (t % 2 == 0) ? 'V' : 'I';
+                // Obtener la temporada del semestre: par = verano ('V'), impar = invierno ('I')
+                char temporadaSemestre = (t % 2 == 0) ? 'V' : 'I';
 
                 // Validar si el cultivo es compatible con la temporada
-                if (!esCultivoValido(cultivo, temporadaTrimestre)) {
+                if (!esCultivoValido(cultivo, temporadaSemestre)) {
                     // Buscar un cultivo válido para la temporada actual
-                    int nuevoCultivo = encontrarCultivoValido(temporadaTrimestre);
+                    int nuevoCultivo = encontrarCultivoValido(temporadaSemestre);
                     solution.setVariable(variableIndex, nuevoCultivo); // Reemplazar el cultivo
                 }
             }
         }
     }
     
-    private boolean esCultivoValido(int cultivo, char temporadaTrimestre) {
+    private boolean esCultivoValido(int cultivo, char temporadaSemestre) {
         if (cultivo == 0) { // Cultivo 0 (descanso) siempre es válido
             return true;
         }
         char temporadaCultivoActual = temporadaCultivo[cultivo];
-        return temporadaCultivoActual == 'A' || temporadaCultivoActual == temporadaTrimestre;
+        return temporadaCultivoActual == 'A' || temporadaCultivoActual == temporadaSemestre;
     }
     
-    private int encontrarCultivoValido(char temporadaTrimestre) {
-    	if (temporadaTrimestre == 'V') {
+    private int encontrarCultivoValido(char temporadaSemestre) {
+    	if (temporadaSemestre == 'V') {
     		int indice = this.indiceVerano;
     		this.indiceVerano = (this.indiceVerano + 1) % this.cultivosVerano.length;
     		return this.cultivosVerano[indice];
