@@ -9,5 +9,5 @@
     <rendimientoCultivoGrande>0, 4075.5, 4523.5, 1436.5, 896.0, 857.5, 653.0, 9636.0, 22500.0, 16900.0, 20000.0, 20800.0, 29900.0</rendimientoCultivoGrande>
 	<precioCultivo>0, 10804, 11115, 11427, 15796, 9123, 18584, 10142, 4340, 7190, 4390, 4360, 6550</precioCultivo>
 	<temporadaCultivo>A, I, I, V, V, V, V, I, A, A, A, A, A</temporadaCultivo>
-	<costoMantCultivo>0, 0.6, 0.5, 0.4, 0.7, 0.6, 0.5, 0.6, 1.2, 0.8, 0.9, 1.0, 0.7</costoMantCultivo>
+	<costoMantCultivo>0, 1020.0, 1245.0, 650.0, 320.0, 125.0, 315.0, 3000.0, 6125.0, 4450.0, 4000.0, 5600.0, 5500.0</costoMantCultivo>
 </datos>
