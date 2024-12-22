@@ -92,6 +92,7 @@ public class Main extends AbstractAlgorithmRunner {
 	/**
 	 * Guarda las soluciones en un archivo CSV.
 	 */
+	@SuppressWarnings("unused")
 	private static void saveSolutionsToCSV(String fileName, List<IntegerSolution> solutions, AgriculturalData data) {
 	    try (FileWriter writer = new FileWriter(fileName, false)) { // 'false' asegura sobrescritura
 	        // Escribir encabezado
@@ -153,6 +154,7 @@ public class Main extends AbstractAlgorithmRunner {
             int cantCultivos = Integer.parseInt(root.getElementsByTagName("cantCultivos").item(0).getTextContent());
 
             double[] areaParcelas = parseArray(root.getElementsByTagName("areaParcelas").item(0).getTextContent());
+            String[] nombreCultivo = parseArrayString(root.getElementsByTagName("nombreCultivo").item(0).getTextContent());
             double[] rendimientoCultivoChico = parseArray(root.getElementsByTagName("rendimientoCultivoChico").item(0).getTextContent());
             double[] rendimientoCultivoMediano = parseArray(root.getElementsByTagName("rendimientoCultivoMediano").item(0).getTextContent());
             double[] rendimientoCultivoGrande = parseArray(root.getElementsByTagName("rendimientoCultivoGrande").item(0).getTextContent());
@@ -160,7 +162,7 @@ public class Main extends AbstractAlgorithmRunner {
             double[] costoMantCultivo = parseArray(root.getElementsByTagName("costoMantCultivo").item(0).getTextContent());
             char[] temporadaCultivo = parseCharArray(root.getElementsByTagName("temporadaCultivo").item(0).getTextContent());
 
-            return new AgriculturalData(cantParcelas, cantFilas, cantSemestres, cantCultivos, areaParcelas, rendimientoCultivoChico, rendimientoCultivoMediano, rendimientoCultivoGrande, precioCultivo, costoMantCultivo, temporadaCultivo);
+            return new AgriculturalData(cantParcelas, cantFilas, cantSemestres, cantCultivos, areaParcelas, nombreCultivo, rendimientoCultivoChico, rendimientoCultivoMediano, rendimientoCultivoGrande, precioCultivo, costoMantCultivo, temporadaCultivo);
 
         } catch (Exception e) {
             throw new RuntimeException("Error leyendo el archivo XML: " + e.getMessage(), e);
@@ -181,13 +183,20 @@ public class Main extends AbstractAlgorithmRunner {
                      .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
                      .toString().toCharArray();
     }
-
+    
+    private static String[] parseArrayString(String data) {
+        return Arrays.stream(data.split(",")) 
+                     .map(String::trim)      
+                     .toArray(String[]::new); 
+    }
+    
     public static class AgriculturalData {
         int cantParcelas;
         int cantFilas;
         int cantSemestres;
         int cantCultivos;
         double[] areaParcelas;
+        String[] nombreCultivo;
         double[] rendimientoCultivoChico;
         double[] rendimientoCultivoMediano;
         double[] rendimientoCultivoGrande;
@@ -195,12 +204,13 @@ public class Main extends AbstractAlgorithmRunner {
         double[] costoMantCultivo;
         char[] temporadaCultivo;
 
-        AgriculturalData(int cantParcelas, int cantFilas, int cantSemestres, int cantCultivos, double[] areaParcelas, double[] rendimientoCultivoChico, double[] rendimientoCultivoMediano, double[] rendimientoCultivoGrande, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
+        AgriculturalData(int cantParcelas, int cantFilas, int cantSemestres, int cantCultivos, double[] areaParcelas, String[] nombreCultivo, double[] rendimientoCultivoChico, double[] rendimientoCultivoMediano, double[] rendimientoCultivoGrande, double[] precioCultivo, double[] costoMantCultivo, char[] temporadaCultivo) {
             this.cantParcelas = cantParcelas;
             this.cantFilas = cantFilas;
             this.cantSemestres = cantSemestres;
             this.cantCultivos = cantCultivos;
             this.areaParcelas = areaParcelas;
+            this.nombreCultivo = nombreCultivo;
             this.rendimientoCultivoChico = rendimientoCultivoChico;
             this.rendimientoCultivoMediano = rendimientoCultivoMediano;
             this.rendimientoCultivoGrande = rendimientoCultivoGrande;
