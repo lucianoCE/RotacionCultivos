@@ -63,7 +63,7 @@ public class Main extends AbstractAlgorithmRunner {
 	        problem,
 	        crossover,
 	        mutation,
-	        500 // Tamaño de la población
+	        100 // Tamaño de la población
 	    ).setMaxEvaluations(100000)
 	     .setSolutionListEvaluator(new SequentialSolutionListEvaluator<>())
 	     .build();
@@ -80,24 +80,11 @@ public class Main extends AbstractAlgorithmRunner {
 	    System.out.print("Greedy ganancia: ");
 	    System.out.println(greedyProfitResult);
 	    
-
-		/*
-		 * System.out.println("Guardando resultados greedy de ganancia...");
-		 * ExcelExporter.saveSolutionsToExcel("greedy_profit_results.xlsx",
-		 * greedyProfitResult, data);
-		 * System.out.println("Guardando resultados greedy de diversidad...");
-		 * ExcelExporter.saveSolutionsToExcel("greedy_diversity_results.xlsx",
-		 * greedyDiversityResult, data);
-		 * System.out.println("Guardando resultados algoritmo evolutivo...");
-		 * ExcelExporter.saveSolutionsToExcel("AE_results.xlsx", population, data);
-		 * System.out.println("Todos los resutados se guardaron correctamente.");
-		 */
-	    
 	    System.out.println("Generando grafico de soluciones...");
 	    ScatterPlot.generateScatterPlot("FUN.csv", "scatter_plot.png", - greedyProfitResult.get(0).getObjective(0), - greedyProfitResult.get(0).getObjective(1), - greedyDiversityResult.get(0).getObjective(0), - greedyDiversityResult.get(0).getObjective(1));
 	    
 	    System.out.println("Guardando resultados en archivo excel...");
-		//ExcelExporter.saveSolutionsToExcel2("AE_results.xlsx", greedyProfitResult.get(0), greedyDiversityResult.get(0), population, data);
+		ExcelExporter.saveSolutionsToExcel("AE_results.xlsx", greedyProfitResult.get(0), greedyDiversityResult.get(0), population, data);
 		System.out.println("Todos los resutados se guardaron correctamente.");
 	    
 	}
