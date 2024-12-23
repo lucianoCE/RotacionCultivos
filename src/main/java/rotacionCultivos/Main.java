@@ -22,6 +22,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main extends AbstractAlgorithmRunner {
 	public static void main(String[] args) {
@@ -151,17 +153,36 @@ public class Main extends AbstractAlgorithmRunner {
             int cantParcelas = Integer.parseInt(root.getElementsByTagName("cantParcelas").item(0).getTextContent());
             int cantFilas = Integer.parseInt(root.getElementsByTagName("cantFilas").item(0).getTextContent());
             int cantSemestres = Integer.parseInt(root.getElementsByTagName("cantSemestres").item(0).getTextContent());
-            int cantCultivos = Integer.parseInt(root.getElementsByTagName("cantCultivos").item(0).getTextContent());
+            int cantCultivos = Integer.parseInt(root.getElementsByTagName("cantCultivos").item(0).getTextContent()) + 1; // Se agrega 1 para contabilizar la opción de no plantar, es decir: "Descanso".
 
             double[] areaParcelas = parseArray(root.getElementsByTagName("areaParcelas").item(0).getTextContent());
-            String[] nombreCultivo = parseArrayString(root.getElementsByTagName("nombreCultivo").item(0).getTextContent());
-            double[] rendimientoCultivoChico = parseArray(root.getElementsByTagName("rendimientoCultivoChico").item(0).getTextContent());
-            double[] rendimientoCultivoMediano = parseArray(root.getElementsByTagName("rendimientoCultivoMediano").item(0).getTextContent());
-            double[] rendimientoCultivoGrande = parseArray(root.getElementsByTagName("rendimientoCultivoGrande").item(0).getTextContent());
-            double[] precioCultivo = parseArray(root.getElementsByTagName("precioCultivo").item(0).getTextContent());
-            double[] costoMantCultivo = parseArray(root.getElementsByTagName("costoMantCultivo").item(0).getTextContent());
-            char[] temporadaCultivo = parseCharArray(root.getElementsByTagName("temporadaCultivo").item(0).getTextContent());
-
+            String[] nombreCultivo = Stream.concat(
+                    Stream.of("Descanso"),  // el primer cultivo (0) es 'Descanso'
+                    Arrays.stream(parseArrayString(root.getElementsByTagName("nombreCultivo").item(0).getTextContent())) 
+                ).toArray(String[]::new);
+            double[] rendimientoCultivoChico = Stream.concat(
+            	    Stream.of(0.0), Arrays.stream(parseArray(root.getElementsByTagName("rendimientoCultivoChico").item(0).getTextContent())).boxed()
+            	).mapToDouble(Double::doubleValue).toArray();
+            double[] rendimientoCultivoMediano = Stream.concat(
+            	    Stream.of(0.0), Arrays.stream(parseArray(root.getElementsByTagName("rendimientoCultivoMediano").item(0).getTextContent())).boxed()
+            	).mapToDouble(Double::doubleValue).toArray();
+            double[] rendimientoCultivoGrande = Stream.concat(
+            	    Stream.of(0.0), Arrays.stream(parseArray(root.getElementsByTagName("rendimientoCultivoGrande").item(0).getTextContent())).boxed()
+            	).mapToDouble(Double::doubleValue).toArray();
+            double[] precioCultivo = Stream.concat(
+            	    Stream.of(0.0), Arrays.stream(parseArray(root.getElementsByTagName("precioCultivo").item(0).getTextContent())).boxed()
+            	).mapToDouble(Double::doubleValue).toArray();
+            double[] costoMantCultivo = Stream.concat(
+            	    Stream.of(0.0), Arrays.stream(parseArray(root.getElementsByTagName("costoMantCultivo").item(0).getTextContent())).boxed()
+            	).mapToDouble(Double::doubleValue).toArray();
+            char[] temporadaCultivo = Stream.concat(
+                    Stream.of('A'),
+                    new String(parseCharArray(root.getElementsByTagName("temporadaCultivo").item(0).getTextContent())).chars()
+                        .mapToObj(c -> (char) c) 
+                ).map(Object::toString) 
+                .collect(Collectors.joining()) 
+                .toCharArray();
+            
             return new AgriculturalData(cantParcelas, cantFilas, cantSemestres, cantCultivos, areaParcelas, nombreCultivo, rendimientoCultivoChico, rendimientoCultivoMediano, rendimientoCultivoGrande, precioCultivo, costoMantCultivo, temporadaCultivo);
 
         } catch (Exception e) {
