@@ -51,7 +51,7 @@ public class Main extends AbstractAlgorithmRunner {
 	    
 	    
 	    // Definir operadores para NSGA-II
-	    double crossoverProbability = 0.9;
+	    double crossoverProbability = 0.5;
 	    double mutationProbability = 1.0 / problem.getNumberOfVariables();
 	    double distributionIndex = 10.0;
 
@@ -84,7 +84,7 @@ public class Main extends AbstractAlgorithmRunner {
 	    ScatterPlot.generateScatterPlot("FUN.csv", "scatter_plot.png", - greedyProfitResult.get(0).getObjective(0), - greedyProfitResult.get(0).getObjective(1), - greedyDiversityResult.get(0).getObjective(0), - greedyDiversityResult.get(0).getObjective(1));
 	    
 	    System.out.println("Guardando resultados en archivo excel...");
-		ExcelExporter.saveSolutionsToExcel("AE_results.xlsx", greedyProfitResult.get(0), greedyDiversityResult.get(0), population, data);
+		//ExcelExporter.saveSolutionsToExcel("AE_results.xlsx", greedyProfitResult.get(0), greedyDiversityResult.get(0), population, data);
 		System.out.println("Todos los resutados se guardaron correctamente.");
 	    
 	}

@@ -57,7 +57,9 @@ public class GreedyAgriculturalSolver {
                 }
                 // Calcular ganancia
                 if (bestCrop > 0) { // Si no está en descanso
-                    totalProfit += area * (rendimiento * (precioCultivo[bestCrop] - costoMantCultivo[bestCrop]));
+                    totalProfit += area * (rendimiento * precioCultivo[bestCrop] - costoMantCultivo[bestCrop]);
+                } else {
+                	totalProfit -= costoMantCultivo[bestCrop];
                 }
 
                 // Actualizar frecuencia del cultivo
@@ -121,7 +123,7 @@ public class GreedyAgriculturalSolver {
                     	else 
                     		rendimiento = rendimientoCultivoGrande[cultivo];
                     }
-	                double profit = areaParcelas[parcela] * (rendimiento * (precioCultivo[cultivo] - costoMantCultivo[cultivo]));
+	                double profit = areaParcelas[parcela] * (rendimiento * precioCultivo[cultivo] - costoMantCultivo[cultivo]);
 	                if (profit > maxProfit) {
 	                    maxProfit = profit;
 	                    bestCrop = cultivo;

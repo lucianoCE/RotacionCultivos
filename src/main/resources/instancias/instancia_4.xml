@@ -1,14 +1,14 @@
 <datos>
-    <cantParcelas>15</cantParcelas>
-    <cantFilas>3</cantFilas>
-    <cantSemestres>4</cantSemestres>
-    <cantCultivos>13</cantCultivos>
-    <areaParcelas>1.0, 1.5, 1.2, 1.3, 1.1, 1.0, 1.5, 1.2, 1.3, 1.1, 1.0, 1.5, 1.2, 1.3, 1.1</areaParcelas>
-    <nombreCultivo>Descanso, Trigo, Cebada Cervecera, Maíz, Girasol, Sorgo, Soja, Arroz, Papa, Manzana, Naranja, Cebolla, Tomate</nombreCultivo>
-    <rendimientoCultivoChico>0, 3040.0, 2923.0, 1255.5, 896.0, 89.5, 473.3, 8297.0, 22500.0, 16900.0, 20000.0, 20800.0, 29900.0</rendimientoCultivoChico>
-    <rendimientoCultivoMediano>0, 4589.5, 4018.0, 229.5, 896.0, 160.5, 515.0, 9268.0, 22500.0, 16900.0, 20000.0, 20800.0, 29900.0</rendimientoCultivoMediano>
-    <rendimientoCultivoGrande>0, 4075.5, 4523.5, 1436.5, 896.0, 857.5, 653.0, 9636.0, 22500.0, 16900.0, 20000.0, 20800.0, 29900.0</rendimientoCultivoGrande>
-	<precioCultivo>0, 10804, 11115, 11427, 15796, 9123, 18584, 10142, 4340, 7190, 4390, 4360, 6550</precioCultivo>
-	<temporadaCultivo>A, I, I, V, V, V, V, I, A, A, A, A, A</temporadaCultivo>
-	<costoMantCultivo>0, 1020.0, 1245.0, 650.0, 320.0, 125.0, 315.0, 3000.0, 6125.0, 4450.0, 4000.0, 5600.0, 5500.0</costoMantCultivo>
+    <cantParcelas>30</cantParcelas>
+    <cantFilas>10</cantFilas>
+    <cantSemestres>10</cantSemestres>
+    <cantCultivos>8</cantCultivos>
+    <areaParcelas>120.5, 189.3, 199.9, 215.4, 345.6, 489.7, 512.2, 678.9, 754.0, 803.1, 99.5, 134.2, 178.8, 223.7, 301.1, 400.0, 450.8, 520.6, 601.3, 700.0, 50.1, 198.4, 275.5, 390.6, 480.0, 530.2, 650.7, 720.5, 810.3, 900.0</areaParcelas>
+    <nombreCultivo>Descanso, Trigo, Cebada Cervecera, Maíz, Girasol, Sorgo, Soja, Arroz</nombreCultivo>
+    <rendimientoCultivoChico>0.0, 3756.0, 3927.0, 3926.0, 896.0, 2030.5, 2698.0, 8297.0</rendimientoCultivoChico>
+    <rendimientoCultivoMediano>0.0, 3942.0, 3939.0, 6138.0, 896.0, 3840.5, 2259.0, 9268.0</rendimientoCultivoMediano>
+    <rendimientoCultivoGrande>0.0, 4018.0, 4098.0, 5597.5, 896.0, 4651.5, 2797.5, 9636.0</rendimientoCultivoGrande>
+	<precioCultivo>0, 10.804, 11.115, 11.427, 15.796, 9.123, 18.584, 10.142</precioCultivo>
+	<temporadaCultivo>A, I, I, V, V, V, V, I</temporadaCultivo>
+	<costoMantCultivo>0, 36760.12, 37917.22, 43346.68, 27369.83, 30485.09, 29506.01, 80062.31</costoMantCultivo>
 </datos>

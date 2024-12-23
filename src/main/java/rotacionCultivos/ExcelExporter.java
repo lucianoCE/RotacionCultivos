@@ -192,7 +192,7 @@ public class ExcelExporter {
 
 	    // Crear encabezado de la tabla
 	    Row headerRow = sheet.createRow(rowNum++);
-	    Cell nroCultivoHeader = headerRow.createCell(0);
+	    Cell nroCultivoHeader = headerRow.createCell(1);
 	    nroCultivoHeader.setCellValue("Nro Cultivo");
 	    nroCultivoHeader.setCellStyle(headerStyle);
 
@@ -203,8 +203,8 @@ public class ExcelExporter {
 	    // Agregar filas con números y nombres de cultivos
 	    for (int i = 0; i < data.nombreCultivo.length; i++) {
 	        Row row = sheet.createRow(rowNum++);
-	        row.createCell(0).setCellValue(i); // Número de cultivo
-	        row.createCell(1).setCellValue(data.nombreCultivo[i]); // Nombre del cultivo
+	        row.createCell(1).setCellValue(i); // Número de cultivo
+	        row.createCell(2).setCellValue(data.nombreCultivo[i]); // Nombre del cultivo
 	    }
 
 	    return rowNum;

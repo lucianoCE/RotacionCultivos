@@ -143,7 +143,7 @@ public class AgriculturalOptimizationProblem extends AbstractIntegerProblem {
                 		rendimiento = rendimientoCultivoGrande[crop];
                 }
                 if (crop > 0) { // Si no está en descanso
-                    totalProfit += area * (rendimiento * (precioCultivo[crop] - costoMantCultivo[crop]));
+                    totalProfit += area * (rendimiento * precioCultivo[crop] - costoMantCultivo[crop]);
                 } else {
                 	totalProfit -= costoMantCultivo[crop];
                 }
