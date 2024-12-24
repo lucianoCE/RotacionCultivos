@@ -16,8 +16,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class ScatterPlot {
-	public static void generateScatterPlot(String csvFilePath, String outputImagePath, double gananciaGreedyG, double diversidadGreedyG,
-			double gananciaGreedyD, double diversidadGreedyD) {
+	public static void generateScatterPlot(String csvFilePath, String outputImagePath, double gananciaGreedyG,
+			double diversidadGreedyG, double gananciaGreedyD, double diversidadGreedyD) {
 		String line;
 		String csvSplitBy = ",";
 		XYSeries series = new XYSeries("Soluciones");
@@ -35,18 +35,18 @@ public class ScatterPlot {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		XYSeries serieGreedyProfit = new XYSeries("Greedy Profit");
 		serieGreedyProfit.add(gananciaGreedyG, diversidadGreedyG);
-		
+
 		XYSeries serieGreedyDiversidad = new XYSeries("Greedy Diversidad");
 		serieGreedyDiversidad.add(gananciaGreedyD, diversidadGreedyD);
 
 		// Crear el dataset
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		dataset.addSeries(series);
-		dataset.addSeries(serieGreedyDiversidad);
 		dataset.addSeries(serieGreedyProfit);
+		dataset.addSeries(serieGreedyDiversidad);
 
 		// Crear el gráfico
 		JFreeChart scatterPlot = ChartFactory.createScatterPlot("Resultados de Soluciones", "Ganancia", // Eje X
@@ -56,24 +56,35 @@ public class ScatterPlot {
 				false // No URLs
 		);
 
-		// Configurar el renderer para agregar las líneas de los greedy
+		// Configurar el renderer para personalizar los puntos
 		XYPlot plot = scatterPlot.getXYPlot();
 		XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 
-		// Línea vertical para ganancia máxima
-		renderer.setSeriesPaint(1, Color.GREEN);
-		plot.setDomainGridlinePaint(Color.GREEN);
-		plot.addDomainMarker(
-				new org.jfree.chart.plot.ValueMarker(gananciaGreedyG, Color.GREEN, new BasicStroke(2.0f)));
+		// Deshabilitar las líneas para todas las series
+		renderer.setSeriesLinesVisible(0, false);
+		renderer.setSeriesLinesVisible(1, false);
+		renderer.setSeriesLinesVisible(2, false);
 
-		// Línea horizontal para diversidad máxima
-		renderer.setSeriesPaint(2, Color.BLUE);
-		plot.setRangeGridlinePaint(Color.BLUE);
-		plot.addRangeMarker(
-				new org.jfree.chart.plot.ValueMarker(diversidadGreedyD, Color.BLUE, new BasicStroke(2.0f)));
+		// Configurar los puntos de las series
+		renderer.setSeriesPaint(0, Color.RED); // Color de la serie principal
+		renderer.setSeriesShape(0, new java.awt.geom.Ellipse2D.Double(-3, -3, 6, 6)); // Círculos
+
+		renderer.setSeriesPaint(1, Color.MAGENTA); // Color de Greedy Profit
+		renderer.setSeriesShape(1, new java.awt.geom.Rectangle2D.Double(-3, -3, 6, 6)); // Cuadrados
+
+		renderer.setSeriesPaint(2, Color.BLUE); // Color de Greedy Diversidad
+		renderer.setSeriesShape(2, new java.awt.geom.Rectangle2D.Double(-3, -3, 6, 6)); // Cuadrados
+
+		// Línea vertical para ganancia máxima
+		plot.addDomainMarker(new org.jfree.chart.plot.ValueMarker(gananciaGreedyG, Color.MAGENTA, new BasicStroke(2.0f)));
+
+		// Línea vertical para diversidad máxima
+		plot.addRangeMarker(new org.jfree.chart.plot.ValueMarker(diversidadGreedyD, Color.BLUE, new BasicStroke(2.0f)));
+
+		plot.setRenderer(renderer);
 
 		// Ajustar el eje X
-		double minGanancia = Math.min(dataset.getSeries(0).getMinX(),gananciaGreedyD);
+		double minGanancia = Math.min(dataset.getSeries(0).getMinX(), gananciaGreedyD);
 		double maxGanancia = Math.max(dataset.getSeries(0).getMaxX(), gananciaGreedyG);
 		double rangoGanancia = maxGanancia - minGanancia;
 		plot.getDomainAxis().setRange(0, maxGanancia + rangoGanancia * 0.05);
