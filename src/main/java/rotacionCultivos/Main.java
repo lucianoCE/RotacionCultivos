@@ -1,5 +1,6 @@
 package rotacionCultivos;
 
+import org.apache.commons.io.FileUtils;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
@@ -16,6 +17,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+
 import rotacionCultivos.GreedyAgriculturalSolver.Result;
 
 import java.io.File;
@@ -23,13 +25,56 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main extends AbstractAlgorithmRunner {
 	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+
+        // Pregunta 1: Nombre del archivo con la instancia a evaluar
+        System.out.print("Ingrese el nombre del archivo con la instancia a evaluar: ");
+        String archivoInstancia = scanner.nextLine();
+
+        // Pregunta 2: Si quiere graficar resultados
+        boolean graficar = false;
+        while (true) {
+            System.out.print("\u00bfDesea graficar los resultados? (Y/N): ");
+            String respuestaGraficar = scanner.nextLine().trim().toUpperCase();
+            if (respuestaGraficar.equals("Y") || respuestaGraficar.equals("y")) {
+                graficar = true;
+                break;
+            } else if (respuestaGraficar.equals("N") || respuestaGraficar.equals("n")) {
+                graficar = false;
+                break;
+            } else {
+                System.out.println("Por favor, ingrese 'Y' para sí o 'N' para no.");
+            }
+        }
+
+        // Pregunta 3: Si quiere guardar datos en un archivo Excel
+        boolean guardarExcel = false;
+        while (true) {
+        	System.out.println("Advertencia: para instancias muy grandes, guardar en Excel puede tomar mucho tiempo.");
+            System.out.print("\u00bfDesea guardar los datos en un archivo Excel? (Y/N): ");
+            String respuestaGuardarExcel = scanner.nextLine().trim().toUpperCase();
+            if (respuestaGuardarExcel.equals("Y") || respuestaGuardarExcel.equals("y")) {
+                guardarExcel = true;
+                break;
+            } else if (respuestaGuardarExcel.equals("N") || respuestaGuardarExcel.equals("n")) {
+                guardarExcel = false;
+                break;
+            } else {
+                System.out.println("Por favor, ingrese 'Y' para sí o 'N' para no.");
+            }
+        }
+        
+        scanner.close();
+        
 		JMetalLogger.logger.setUseParentHandlers(false);
-		String xmlFilePath = "src/main/resources/instancias/instancia_1.xml"; // Ruta del archivo XML
+		String directorioInstancias = "src/main/resources/instancias/";
+		String xmlFilePath = directorioInstancias + archivoInstancia;
 		AgriculturalData data = readDataFromXML(xmlFilePath);
 
 		// Medir tiempo total del algoritmo Greedy (diversidad)
@@ -58,7 +103,7 @@ public class Main extends AbstractAlgorithmRunner {
 
 		// Medir tiempo total del algoritmo evolutivo NSGA-II
 		long startNSGAII = System.nanoTime();
-
+		
 		double crossoverProbability = 0.5;
 		double mutationProbability = 1.0 / problem.getNumberOfVariables();
 		double distributionIndex = 10.0;
@@ -72,7 +117,7 @@ public class Main extends AbstractAlgorithmRunner {
 				crossover, 
 				mutation, 
 				100 // Tamaño de la población
-		).setMaxEvaluations(100000)
+		).setMaxEvaluations(200000)
 		.setSolutionListEvaluator(new SequentialSolutionListEvaluator<>())
 		.build();
 
@@ -114,17 +159,51 @@ public class Main extends AbstractAlgorithmRunner {
 		System.out.println("Indice de diversidad: " + greedyProfitResult.get(0).getObjective(1));
 
 		System.out.println();
+		
+		String nombreInstancia = archivoInstancia.substring(0, archivoInstancia.lastIndexOf('.'));
 
-		System.out.println("Generando grafico de soluciones...");
-		ScatterPlot.generateScatterPlot("FUN.csv", "scatter_plot.png", -greedyProfitResult.get(0).getObjective(0),
-				-greedyProfitResult.get(0).getObjective(1), -greedyDiversityResult.get(0).getObjective(0),
-				-greedyDiversityResult.get(0).getObjective(1));
+        // Crear directorio para la instancia
+        String directorioSalida = "resultados/" + nombreInstancia;
+        File directorio = new File(directorioSalida);
+        if (!directorio.exists()) {
+            if (directorio.mkdirs()) {
+                System.out.println("Directorio creado: " + directorioSalida);
+            } else {
+                System.err.println("No se pudo crear el directorio: " + directorioSalida);
+                return;
+            }
+        }
+		
+		if (graficar) {
+			System.out.println("Generando graficos de soluciones...");
+			ScatterPlot.plotWithGreedy("FUN.csv", directorioSalida + "/results_with_greedy.png", -greedyProfitResult.get(0).getObjective(0),
+					-greedyProfitResult.get(0).getObjective(1), -greedyDiversityResult.get(0).getObjective(0),
+					-greedyDiversityResult.get(0).getObjective(1));
+			ScatterPlot.plotResults("FUN.csv", directorioSalida + "/results.png");
+		}
+		
 
-		System.out.println("Guardando resultados en archivo excel...");
-		// ExcelExporter.saveSolutionsToExcel("AE_results.xlsx",
-		// greedyProfitResult.get(0), greedyDiversityResult.get(0), population, data);
-		System.out.println("Todos los resutados se guardaron correctamente.");
+		if (guardarExcel) {
+			System.out.println("Guardando resultados en archivo excel...");
+			ExcelExporter.saveSolutionsToExcel(directorioSalida + "/AE_results.xlsx",
+					greedyProfitResult.get(0), greedyDiversityResult.get(0), population, data);
+			System.out.println("Todos los resutados se guardaron correctamente.");
+		}
 
+		File source = new File("FUN.csv");
+		File dest = new File(directorioSalida);
+		try {
+		    FileUtils.moveFileToDirectory(source, dest, true);
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+		
+		source = new File("VAR.csv");
+		try {
+		    FileUtils.moveFileToDirectory(source, dest, true);
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
 	}
 
 	/**
@@ -187,20 +266,8 @@ public class Main extends AbstractAlgorithmRunner {
 			int cantParcelas = Integer.parseInt(root.getElementsByTagName("cantParcelas").item(0).getTextContent());
 			int cantFilas = Integer.parseInt(root.getElementsByTagName("cantFilas").item(0).getTextContent());
 			int cantSemestres = Integer.parseInt(root.getElementsByTagName("cantSemestres").item(0).getTextContent());
-			int cantCultivos = Integer.parseInt(root.getElementsByTagName("cantCultivos").item(0).getTextContent()) + 1; // Se
-																															// agrega
-																															// 1
-																															// para
-																															// contabilizar
-																															// la
-																															// opción
-																															// de
-																															// no
-																															// plantar,
-																															// es
-																															// decir:
-																															// "Descanso".
-
+			// Se agrega 1 para contabilizar la opción de no plantar, es decir: "Descanso".
+			int cantCultivos = Integer.parseInt(root.getElementsByTagName("cantCultivos").item(0).getTextContent()) + 1; 
 			double[] areaParcelas = parseArray(root.getElementsByTagName("areaParcelas").item(0).getTextContent());
 			String[] nombreCultivo = Stream.concat(Stream.of("Descanso"), // el primer cultivo (0) es 'Descanso'
 					Arrays.stream(
