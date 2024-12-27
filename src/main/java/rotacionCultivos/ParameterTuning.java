@@ -7,12 +7,10 @@ import org.uma.jmetal.operator.crossover.impl.IntegerSBXCrossover;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
-import org.uma.jmetal.qualityindicator.impl.hypervolume.*;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.impl.WFGHypervolume;
 import org.uma.jmetal.util.front.Front;
 import org.uma.jmetal.util.front.impl.*;
 import org.uma.jmetal.util.point.PointSolution;
-import org.uma.jmetal.util.point.impl.ArrayPoint;
 
 import rotacionCultivos.Main.AgriculturalData;
 
