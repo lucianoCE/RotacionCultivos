@@ -107,7 +107,7 @@ public class Main extends AbstractAlgorithmRunner {
 			// Medir tiempo total del algoritmo evolutivo NSGA-II
 			long startNSGAII = System.nanoTime();
 
-			double crossoverProbability = 0.5;
+			double crossoverProbability = 0.9;
 			double mutationProbability = 1.0 / problem.getNumberOfVariables();
 			double distributionIndex = 10.0;
 
@@ -116,10 +116,8 @@ public class Main extends AbstractAlgorithmRunner {
 			MutationOperator<IntegerSolution> mutation = new SeasonalIntegerMutation(mutationProbability,
 					data.cantParcelas, data.cantFilas, data.temporadaCultivo);
 
-			Algorithm<List<IntegerSolution>> algorithm = new NSGAIIBuilder<>(problem, crossover, mutation, 100 // Tamaño
-																												// de la
-																												// población
-			).setMaxEvaluations(200000).setSolutionListEvaluator(new SequentialSolutionListEvaluator<>()).build();
+			Algorithm<List<IntegerSolution>> algorithm = new NSGAIIBuilder<>(problem, crossover, mutation, 200 // Tamaño  de la población
+			).setMaxEvaluations(50000).setSolutionListEvaluator(new SequentialSolutionListEvaluator<>()).build();
 
 			algorithm.run();
 			long endNSGAII = System.nanoTime();

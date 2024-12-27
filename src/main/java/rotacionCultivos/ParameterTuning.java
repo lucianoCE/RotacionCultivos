@@ -104,7 +104,7 @@ public class ParameterTuning {
         // Number of objectives
         int numberOfObjectives = population.get(0).getNumberOfObjectives();
 
-        // Step 1: Find min and max values for normalization
+        // Find min and max values for normalization
         double[] minValues = new double[numberOfObjectives];
         double[] maxValues = new double[numberOfObjectives];
         Arrays.fill(minValues, Double.MAX_VALUE);
@@ -112,28 +112,27 @@ public class ParameterTuning {
 
         for (IntegerSolution solution : population) {
             for (int i = 0; i < numberOfObjectives; i++) {
-                double value = -solution.getObjective(i); // Negate for minimization
+                double value = -solution.getObjective(i);
                 minValues[i] = Math.min(minValues[i], value);
                 maxValues[i] = Math.max(maxValues[i], value);
             }
         }
 
-        // Step 2: Normalize population to PointSolution format
         List<PointSolution> normalizedPopulation = new ArrayList<>();
         for (IntegerSolution solution : population) {
             PointSolution pointSolution = new PointSolution(numberOfObjectives);
             for (int i = 0; i < numberOfObjectives; i++) {
-                double value = -solution.getObjective(i); // Negate for minimization
+                double value = -solution.getObjective(i);
                 double normalizedValue = (value - minValues[i]) / (maxValues[i] - minValues[i]);
                 pointSolution.setObjective(i, normalizedValue);
             }
             normalizedPopulation.add(pointSolution);
         }
 
-        // Step 3: Define the reference point
+        // Define the reference point
         PointSolution referencePoint = new PointSolution(numberOfObjectives);
         for (int i = 0; i < numberOfObjectives; i++) {
-            referencePoint.setObjective(i, 1.1); // Slightly outside normalized range
+            referencePoint.setObjective(i, 1.1); 
         }
 
         // Create a Front object for the reference
@@ -141,7 +140,7 @@ public class ParameterTuning {
         referencePoints.add(referencePoint);
         Front referenceFront = new ArrayFront(referencePoints);
 
-        // Step 4: Compute hypervolume using WFGHypervolume with the referenceFront
+        // Compute hypervolume using WFGHypervolume with the referenceFront
         WFGHypervolume<PointSolution> hypervolume = new WFGHypervolume<>(referenceFront);
         return hypervolume.evaluate(normalizedPopulation);
     }
