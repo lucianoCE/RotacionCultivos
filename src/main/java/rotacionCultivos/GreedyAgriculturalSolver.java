@@ -41,6 +41,11 @@ public class GreedyAgriculturalSolver {
 
 		// Crear matriz para frecuencias de cultivos
 		int[][] cropFrequency = new int[cantParcelas][cantCultivos];
+		for (int i = 0; i < cantParcelas; i++) {
+	        for (int k = 0; k < cantCultivos; k++) {
+	            cropFrequency[i][k] = 0; // Iniciar sin cultivos
+	        }
+	    }
 
 		// Iterar sobre cada parcela y semestre
 		for (int parcela = 0; parcela < cantParcelas; parcela++) {
@@ -132,46 +137,44 @@ public class GreedyAgriculturalSolver {
 				}
 			}
 		} else if (prioridad.equals("diversidad")) {
-			double maxDiversityScore = Double.NEGATIVE_INFINITY;
+	        double maxDiversity = -1;
 
-			// Identificar la temporada actual
-			char temporada = (semestre % 2 == 0) ? 'V' : 'I';
+	     // Probar cada cultivo para la parcela actual
+	        for (int cultivo = 1; cultivo < cantCultivos; cultivo++) { // Cultivos desde 1
+	            char temporada = (semestre % 2 == 0) ? 'V' : 'I';
+	            if (temporadaCultivo[cultivo] == temporada || temporadaCultivo[cultivo] == 'A') {
+	                // Simular la asignación del cultivo
+	                cropFrequency[parcela][cultivo]++;
+	                double parcelDiversity = calculateParcelDiversity(cropFrequency[parcela]);
+	                cropFrequency[parcela][cultivo]--;
 
-			// Evaluar cada cultivo posible
-			for (int cultivo = 1; cultivo < cantCultivos; cultivo++) { // Ignorar "sin cultivo" (0)
-				if (temporadaCultivo[cultivo] == temporada || temporadaCultivo[cultivo] == 'A') {
-					// Simular asignar el cultivo a la parcela actual
-					cropFrequency[parcela][cultivo]++;
-
-					// Calcular el índice de Shannon para esta parcela
-					double totalCultivos = 0.0;
-					for (int k = 1; k < cantCultivos; k++) {
-						totalCultivos += cropFrequency[parcela][k];
-					}
-
-					double parcelDiversityScore = 0.0;
-					if (totalCultivos > 0) {
-						for (int k = 1; k < cantCultivos; k++) {
-							if (cropFrequency[parcela][k] > 0) {
-								double fk = cropFrequency[parcela][k] / totalCultivos;
-								parcelDiversityScore += fk * Math.log(fk);
-							}
-						}
-						parcelDiversityScore = -parcelDiversityScore / Math.log(cantCultivos - 1);
-					}
-
-					// Revertir la simulación
-					cropFrequency[parcela][cultivo]--;
-
-					// Verificar si este cultivo mejora la diversidad
-					if (parcelDiversityScore > maxDiversityScore) {
-						maxDiversityScore = parcelDiversityScore;
-						bestCrop = cultivo;
-					}
-				}
-			}
+	                if (parcelDiversity > maxDiversity) {
+	                    maxDiversity = parcelDiversity;
+	                    bestCrop = cultivo;
+	                }
+	            }
+	        }
 		}
 		return bestCrop;
+	}
+	
+	private double calculateParcelDiversity(int[] parcelCropFrequency) {
+	    double totalCultivos = 0.0;
+	    for (int freq : parcelCropFrequency) {
+	        totalCultivos += freq;
+	    }
+
+	    if (totalCultivos == 0) return 0.0; // Sin cultivos, diversidad = 0
+
+	    double parcelDiversityScore = 0.0;
+	    for (int freq : parcelCropFrequency) {
+	        if (freq > 0) {
+	            double fk = freq / totalCultivos;
+	            parcelDiversityScore += fk * Math.log(fk);
+	        }
+	    }
+
+	    return -parcelDiversityScore / Math.log(cantCultivos - 1);
 	}
 
 	public List<IntegerSolution> initializePopulation(AbstractIntegerProblem problem, int[][] cropPlan,

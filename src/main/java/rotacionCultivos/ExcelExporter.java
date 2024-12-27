@@ -17,19 +17,13 @@ public class ExcelExporter {
 	    Workbook workbook = new XSSFWorkbook();
 	    Sheet sheet = workbook.createSheet("Solutions");
 
-	    // Crear estilos para encabezados y valores monetarios
-	    CellStyle headerStyle = workbook.createCellStyle();
-	    Font headerFont = workbook.createFont();
-	    headerFont.setBold(true);
-	    headerStyle.setFont(headerFont);
-
-	    CellStyle currencyStyle = workbook.createCellStyle();
-	    DataFormat format = workbook.createDataFormat();
-	    currencyStyle.setDataFormat(format.getFormat("$#,##0.00"));
+	    // Crear estilos una sola vez
+	    CellStyle headerStyle = createHeaderStyle(workbook);
+	    CellStyle currencyStyle = createCurrencyStyle(workbook);
 
 	    int rowNum = 0;
 
-	    // Agregar soluciones greedy con tabla de cultivos al lado
+	    // Agregar soluciones greedy
 	    rowNum = addSolutionWithCultivoTable(sheet, "Solución Greedy Ganancia", greedyProfit, data, headerStyle, currencyStyle, rowNum);
 	    rowNum = addSolutionToSheet(sheet, "Solución Greedy Diversidad", greedyDiversity, data, headerStyle, currencyStyle, rowNum);
 
@@ -39,7 +33,6 @@ public class ExcelExporter {
 	        rowNum = addSolutionToSheet(sheet, "Solución " + solutionCounter++, solution, data, headerStyle, currencyStyle, rowNum);
 	    }
 
-	    // Ajustar automáticamente el tamaño de las columnas
 	    for (int col = 0; col <= data.cantSemestres + 6; col++) {
 	        sheet.autoSizeColumn(col);
 	    }
@@ -47,10 +40,24 @@ public class ExcelExporter {
 	    // Guardar el archivo Excel
 	    try (FileOutputStream fileOut = new FileOutputStream(fileName)) {
 	        workbook.write(fileOut);
-	        workbook.close();
 	    } catch (IOException e) {
 	        System.err.println("Error al escribir el archivo Excel: " + e.getMessage());
 	    }
+	}
+
+	private static CellStyle createHeaderStyle(Workbook workbook) {
+	    CellStyle headerStyle = workbook.createCellStyle();
+	    Font headerFont = workbook.createFont();
+	    headerFont.setBold(true);
+	    headerStyle.setFont(headerFont);
+	    return headerStyle;
+	}
+
+	private static CellStyle createCurrencyStyle(Workbook workbook) {
+	    CellStyle currencyStyle = workbook.createCellStyle();
+	    DataFormat format = workbook.createDataFormat();
+	    currencyStyle.setDataFormat(format.getFormat("$#,##0.00"));
+	    return currencyStyle;
 	}
 
 	// Método para agregar soluciones con tabla de cultivos al lado
