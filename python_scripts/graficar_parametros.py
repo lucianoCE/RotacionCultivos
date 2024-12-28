@@ -59,6 +59,23 @@ def main():
             nombre_y='Hipervolumen Promedio', 
             archivo_salida_base='grafico_hipervolumen_promedio'
         )
+
+        # Crear gráficos para AvgProfit
+        graficar_datos(
+            datos, 
+            columna_y='AvgProfit', 
+            nombre_y='Ganancia Promedio', 
+            archivo_salida_base='grafico_ganancia_promedio'
+        )
+
+        # Crear gráficos para AvgDiversity
+        graficar_datos(
+            datos, 
+            columna_y='AvgDiversity', 
+            nombre_y='Diversidad Promedio', 
+            archivo_salida_base='grafico_diversidad_promedio'
+        )
+        
         
     except Exception as e:
         print(f"Error: {e}")
