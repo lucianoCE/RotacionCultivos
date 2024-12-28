@@ -31,182 +31,179 @@ import java.util.stream.Stream;
 
 public class Main extends AbstractAlgorithmRunner {
 	public static void main(String[] args) {
-		/*
-		 * Scanner scanner = new Scanner(System.in);
-		 * 
-		 * // Pregunta 1: Nombre del archivo con la instancia a evaluar
-		 * System.out.print("Ingrese el nombre del archivo con la instancia a evaluar: "
-		 * ); String archivoInstancia = scanner.nextLine();
-		 * 
-		 * // Pregunta 2: Si quiere graficar resultados boolean graficar = false; while
-		 * (true) { System.out.print("\u00bfDesea graficar los resultados? (Y/N): ");
-		 * String respuestaGraficar = scanner.nextLine().trim().toUpperCase(); if
-		 * (respuestaGraficar.equals("Y") || respuestaGraficar.equals("y")) { graficar =
-		 * true; break; } else if (respuestaGraficar.equals("N") ||
-		 * respuestaGraficar.equals("n")) { graficar = false; break; } else {
-		 * System.out.println("Por favor, ingrese 'Y' para sí o 'N' para no."); } }
-		 * 
-		 * // Pregunta 3: Si quiere guardar datos en un archivo Excel boolean
-		 * guardarExcel = false; while (true) { System.out.
-		 * println("Advertencia: para instancias muy grandes, guardar en Excel puede tomar mucho tiempo."
-		 * );
-		 * System.out.print("\u00bfDesea guardar los datos en un archivo Excel? (Y/N): "
-		 * ); String respuestaGuardarExcel = scanner.nextLine().trim().toUpperCase(); if
-		 * (respuestaGuardarExcel.equals("Y") || respuestaGuardarExcel.equals("y")) {
-		 * guardarExcel = true; break; } else if (respuestaGuardarExcel.equals("N") ||
-		 * respuestaGuardarExcel.equals("n")) { guardarExcel = false; break; } else {
-		 * System.out.println("Por favor, ingrese 'Y' para sí o 'N' para no."); } }
-		 * 
-		 * scanner.close();
-		 */
+		 Scanner scanner = new Scanner(System.in);
+		  
+		// Pregunta 1: Nombre del archivo con la instancia a evaluar
+	        System.out.print("Ingrese el nombre del archivo con la instancia a evaluar: ");
+	        String archivoInstancia = scanner.nextLine();
+	        // Pregunta 2: Si quiere graficar resultados
+	        boolean graficar = false;
+	        while (true) {
+	            System.out.print("\u00bfDesea graficar los resultados? (Y/N): ");
+	            String respuestaGraficar = scanner.nextLine().trim().toUpperCase();
+	            if (respuestaGraficar.equals("Y") || respuestaGraficar.equals("y")) {
+	                graficar = true;
+	                break;
+	            } else if (respuestaGraficar.equals("N") || respuestaGraficar.equals("n")) {
+	                graficar = false;
+	                break;
+	            } else {
+	                System.out.println("Por favor, ingrese 'Y' para sí o 'N' para no.");
+	            }
+	        }
+	        // Pregunta 3: Si quiere guardar datos en un archivo Excel
+	        boolean guardarExcel = false;
+	        while (true) {
+	        	System.out.println("Advertencia: para instancias muy grandes, guardar en Excel puede tomar mucho tiempo.");
+	            System.out.print("\u00bfDesea guardar los datos en un archivo Excel? (Y/N): ");
+	            String respuestaGuardarExcel = scanner.nextLine().trim().toUpperCase();
+	            if (respuestaGuardarExcel.equals("Y") || respuestaGuardarExcel.equals("y")) {
+	                guardarExcel = true;
+	                break;
+	            } else if (respuestaGuardarExcel.equals("N") || respuestaGuardarExcel.equals("n")) {
+	                guardarExcel = false;
+	                break;
+	            } else {
+	                System.out.println("Por favor, ingrese 'Y' para sí o 'N' para no.");
+	            }
+	        }
+	        
+	        scanner.close();
+		 
 
 		JMetalLogger.logger.setUseParentHandlers(false);
 
-		// BORRAR
-		List<String> instancias = new ArrayList<>();
-		instancias.add("instanciaChica.xml");
-		instancias.add("instanciaMediana.xml");
-		instancias.add("instanciaGrande.xml");
-		instancias.add("instanciaVariada.xml");
-		boolean graficar = true;
-		boolean guardarExcel = false;
-		
+		String directorioInstancias = "src/main/resources/instancias/";
+		String xmlFilePath = directorioInstancias + archivoInstancia;
+		AgriculturalData data = readDataFromXML(xmlFilePath);
 
-		for (String archivoInstancia : instancias) {
-			System.out.println("\n======= Resultados de instancia " + archivoInstancia + " =======\n");
-		// BORRAR
-			
-			String directorioInstancias = "src/main/resources/instancias/";
-			String xmlFilePath = directorioInstancias + archivoInstancia;
-			AgriculturalData data = readDataFromXML(xmlFilePath);
+		// Medir tiempo total del algoritmo Greedy (diversidad)
+		long startGreedyDiversity = System.nanoTime();
+		GreedyAgriculturalSolver solverDiversity = new GreedyAgriculturalSolver(data.cantParcelas, data.cantSemestres,
+				data.cantCultivos, data.areaParcelas, data.rendimientoCultivoChico, data.rendimientoCultivoMediano,
+				data.rendimientoCultivoGrande, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo,
+				"diversidad");
+		Result cropPlanDiversity = solverDiversity.solve();
+		long endGreedyDiversity = System.nanoTime();
 
-			// Medir tiempo total del algoritmo Greedy (diversidad)
-			long startGreedyDiversity = System.nanoTime();
-			GreedyAgriculturalSolver solverDiversity = new GreedyAgriculturalSolver(data.cantParcelas,
-					data.cantSemestres, data.cantCultivos, data.areaParcelas, data.rendimientoCultivoChico,
-					data.rendimientoCultivoMediano, data.rendimientoCultivoGrande, data.precioCultivo,
-					data.costoMantCultivo, data.temporadaCultivo, "diversidad");
-			Result cropPlanDiversity = solverDiversity.solve();
-			long endGreedyDiversity = System.nanoTime();
+		// Medir tiempo total del algoritmo Greedy (ganancia)
+		long startGreedyProfit = System.nanoTime();
+		GreedyAgriculturalSolver solverProfit = new GreedyAgriculturalSolver(data.cantParcelas, data.cantSemestres,
+				data.cantCultivos, data.areaParcelas, data.rendimientoCultivoChico, data.rendimientoCultivoMediano,
+				data.rendimientoCultivoGrande, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo,
+				"ganancia");
+		Result cropPlanProfit = solverProfit.solve();
+		long endGreedyProfit = System.nanoTime();
 
-			// Medir tiempo total del algoritmo Greedy (ganancia)
-			long startGreedyProfit = System.nanoTime();
-			GreedyAgriculturalSolver solverProfit = new GreedyAgriculturalSolver(data.cantParcelas, data.cantSemestres,
-					data.cantCultivos, data.areaParcelas, data.rendimientoCultivoChico, data.rendimientoCultivoMediano,
-					data.rendimientoCultivoGrande, data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo,
-					"ganancia");
-			Result cropPlanProfit = solverProfit.solve();
-			long endGreedyProfit = System.nanoTime();
+		// Crear la instancia del problema
+		AgriculturalOptimizationProblem problem = new AgriculturalOptimizationProblem(data.cantParcelas, data.cantFilas,
+				data.cantSemestres, data.cantCultivos, data.areaParcelas, data.rendimientoCultivoChico,
+				data.rendimientoCultivoMediano, data.rendimientoCultivoGrande, data.precioCultivo,
+				data.costoMantCultivo, data.temporadaCultivo);
 
-			// Crear la instancia del problema
-			AgriculturalOptimizationProblem problem = new AgriculturalOptimizationProblem(data.cantParcelas,
-					data.cantFilas, data.cantSemestres, data.cantCultivos, data.areaParcelas,
-					data.rendimientoCultivoChico, data.rendimientoCultivoMediano, data.rendimientoCultivoGrande,
-					data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo);
+		// Medir tiempo total del algoritmo evolutivo NSGA-II
+		long startNSGAII = System.nanoTime();
 
-			// Medir tiempo total del algoritmo evolutivo NSGA-II
-			long startNSGAII = System.nanoTime();
+		double crossoverProbability = 0.9;
+		double mutationProbability = 1.0 / problem.getNumberOfVariables();
+		double distributionIndex = 10.0;
 
-			double crossoverProbability = 0.9;
-			double mutationProbability = 1.0 / problem.getNumberOfVariables();
-			double distributionIndex = 10.0;
+		CrossoverOperator<IntegerSolution> crossover = new IntegerSBXCrossover(crossoverProbability, distributionIndex);
+		MutationOperator<IntegerSolution> mutation = new SeasonalIntegerMutation(mutationProbability, data.cantParcelas,
+				data.cantFilas, data.temporadaCultivo);
 
-			CrossoverOperator<IntegerSolution> crossover = new IntegerSBXCrossover(crossoverProbability,
-					distributionIndex);
-			MutationOperator<IntegerSolution> mutation = new SeasonalIntegerMutation(mutationProbability,
-					data.cantParcelas, data.cantFilas, data.temporadaCultivo);
+		Algorithm<List<IntegerSolution>> algorithm = new NSGAIIBuilder<>(problem, crossover, mutation, 200 // Tamaño de
+																											// la
+																											// población
+		).setMaxEvaluations(50000).setSolutionListEvaluator(new SequentialSolutionListEvaluator<>()).build();
 
-			Algorithm<List<IntegerSolution>> algorithm = new NSGAIIBuilder<>(problem, crossover, mutation, 200 // Tamaño  de la población
-			).setMaxEvaluations(50000).setSolutionListEvaluator(new SequentialSolutionListEvaluator<>()).build();
+		algorithm.run();
+		long endNSGAII = System.nanoTime();
 
-			algorithm.run();
-			long endNSGAII = System.nanoTime();
+		List<IntegerSolution> population = algorithm.getResult();
 
-			List<IntegerSolution> population = algorithm.getResult();
+		// Guardar resultados en archivos separados
+		printFinalSolutionSet(population);
 
-			// Guardar resultados en archivos separados
-			printFinalSolutionSet(population);
+		List<IntegerSolution> greedyProfitResult = solverProfit.initializePopulation(problem, cropPlanProfit.cropPlan,
+				cropPlanProfit.totalProfit, cropPlanProfit.diversityScore);
 
-			List<IntegerSolution> greedyProfitResult = solverProfit.initializePopulation(problem,
-					cropPlanProfit.cropPlan, cropPlanProfit.totalProfit, cropPlanProfit.diversityScore);
+		List<IntegerSolution> greedyDiversityResult = solverDiversity.initializePopulation(problem,
+				cropPlanDiversity.cropPlan, cropPlanDiversity.totalProfit, cropPlanDiversity.diversityScore);
 
-			List<IntegerSolution> greedyDiversityResult = solverDiversity.initializePopulation(problem,
-					cropPlanDiversity.cropPlan, cropPlanDiversity.totalProfit, cropPlanDiversity.diversityScore);
+		System.out.println("-> Tiempos de ejecucion:");
+		System.out.println(String.format("Tiempo de ejecución Greedy (diversidad): %.2f ms",
+				(endGreedyDiversity - startGreedyDiversity) / 1_000_000.0));
+		System.out.println(String.format("Tiempo de ejecución Greedy (ganancia): %.2f ms",
+				(endGreedyProfit - startGreedyProfit) / 1_000_000.0));
+		System.out.println(
+				String.format("Tiempo de ejecución NSGA-II: %.2f ms", (endNSGAII - startNSGAII) / 1_000_000.0));
 
-			System.out.println("-> Tiempos de ejecucion:");
-			System.out.println(String.format("Tiempo de ejecución Greedy (diversidad): %.2f ms",
-					(endGreedyDiversity - startGreedyDiversity) / 1_000_000.0));
-			System.out.println(String.format("Tiempo de ejecución Greedy (ganancia): %.2f ms",
-					(endGreedyProfit - startGreedyProfit) / 1_000_000.0));
-			System.out.println(
-					String.format("Tiempo de ejecución NSGA-II: %.2f ms", (endNSGAII - startNSGAII) / 1_000_000.0));
+		System.out.println();
+		System.out.println("-> Resultados:");
 
-			System.out.println();
-			System.out.println("-> Resultados:");
+		System.out.println("- Greedy diversidad: ");
+		System.out.println("Plan de rotacion: " + greedyDiversityResult.get(0).getVariables());
+		System.out.println("Ganacia: " + -greedyDiversityResult.get(0).getObjective(0));
+		System.out.println("Indice de diversidad: " + greedyDiversityResult.get(0).getObjective(1));
 
-			System.out.println("- Greedy diversidad: ");
-			System.out.println("Plan de rotacion: " + greedyDiversityResult.get(0).getVariables());
-			System.out.println("Ganacia: " + -greedyDiversityResult.get(0).getObjective(0));
-			System.out.println("Indice de diversidad: " + greedyDiversityResult.get(0).getObjective(1));
+		System.out.println();
 
-			System.out.println();
+		System.out.println("- Greedy ganancia: ");
+		System.out.println("Plan de rotacion: " + greedyProfitResult.get(0).getVariables());
+		System.out.println("Ganacia: " + greedyProfitResult.get(0).getObjective(0));
+		System.out.println("Indice de diversidad: " + greedyProfitResult.get(0).getObjective(1));
 
-			System.out.println("- Greedy ganancia: ");
-			System.out.println("Plan de rotacion: " + greedyProfitResult.get(0).getVariables());
-			System.out.println("Ganacia: " + greedyProfitResult.get(0).getObjective(0));
-			System.out.println("Indice de diversidad: " + greedyProfitResult.get(0).getObjective(1));
+		System.out.println();
 
-			System.out.println();
+		String nombreInstancia = archivoInstancia.substring(0, archivoInstancia.lastIndexOf('.'));
 
-			String nombreInstancia = archivoInstancia.substring(0, archivoInstancia.lastIndexOf('.'));
-
-			// Crear directorio para la instancia
-			String directorioSalida = "resultados/" + nombreInstancia;
-			File directorio = new File(directorioSalida);
-			if (!directorio.exists()) {
-				if (directorio.mkdirs()) {
-					System.out.println("Directorio creado: " + directorioSalida);
-				} else {
-					System.err.println("No se pudo crear el directorio: " + directorioSalida);
-					return;
-				}
+		// Crear directorio para la instancia
+		String directorioSalida = "resultados/" + nombreInstancia;
+		File directorio = new File(directorioSalida);
+		if (!directorio.exists()) {
+			if (directorio.mkdirs()) {
+				System.out.println("Directorio creado: " + directorioSalida);
+			} else {
+				System.err.println("No se pudo crear el directorio: " + directorioSalida);
+				return;
 			}
+		}
 
-			if (graficar) {
-				System.out.println("Generando graficos de soluciones...");
-				ScatterPlot.plotWithGreedy("FUN.csv", directorioSalida + "/results_with_greedy.png",
-						-greedyProfitResult.get(0).getObjective(0), -greedyProfitResult.get(0).getObjective(1),
-						-greedyDiversityResult.get(0).getObjective(0), -greedyDiversityResult.get(0).getObjective(1));
-				ScatterPlot.plotResults("FUN.csv", directorioSalida + "/results.png");
-			}
+		if (graficar) {
+			System.out.println("Generando graficos de soluciones...");
+			ScatterPlot.plotWithGreedy("FUN.csv", directorioSalida + "/results_with_greedy.png",
+					-greedyProfitResult.get(0).getObjective(0), -greedyProfitResult.get(0).getObjective(1),
+					-greedyDiversityResult.get(0).getObjective(0), -greedyDiversityResult.get(0).getObjective(1));
+			ScatterPlot.plotResults("FUN.csv", directorioSalida + "/results.png");
+		}
 
-			if (guardarExcel) {
-				System.out.println("Guardando resultados en archivo excel...");
-				ExcelExporter.saveSolutionsToExcel(directorioSalida + "/AE_results.xlsx", greedyProfitResult.get(0),
-						greedyDiversityResult.get(0), population, data);
-				System.out.println("Todos los resutados se guardaron correctamente.");
-			}
+		if (guardarExcel) {
+			System.out.println("Guardando resultados en archivo excel...");
+			ExcelExporter.saveSolutionsToExcel(directorioSalida + "/AE_results.xlsx", greedyProfitResult.get(0),
+					greedyDiversityResult.get(0), population, data);
+			System.out.println("Todos los resutados se guardaron correctamente.");
+		}
 
-			File source = new File("FUN.csv");
-			File dest = new File(directorioSalida);
-			try {
-				File destFile = new File(dest, "FUN.csv");
-				if (destFile.exists())
-					destFile.delete();
-				FileUtils.moveFileToDirectory(source, dest, true);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		File source = new File("FUN.csv");
+		File dest = new File(directorioSalida);
+		try {
+			File destFile = new File(dest, "FUN.csv");
+			if (destFile.exists())
+				destFile.delete();
+			FileUtils.moveFileToDirectory(source, dest, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-			source = new File("VAR.csv");
-			try {
-				File destFile = new File(dest, "VAR.csv");
-				if (destFile.exists())
-					destFile.delete();
-				FileUtils.moveFileToDirectory(source, dest, true);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		source = new File("VAR.csv");
+		try {
+			File destFile = new File(dest, "VAR.csv");
+			if (destFile.exists())
+				destFile.delete();
+			FileUtils.moveFileToDirectory(source, dest, true);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 	}

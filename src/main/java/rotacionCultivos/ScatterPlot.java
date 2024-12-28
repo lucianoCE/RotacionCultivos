@@ -6,8 +6,12 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.integersolution.IntegerSolution;
+import java.util.List;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -168,4 +172,42 @@ public class ScatterPlot {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void guardarFrentePareto(List<List<IntegerSolution>> solucionesPorInstancia, List<String> nombresInstancias) {
+        String directorioSalida = "frentes_pareto";
+        File directorio = new File(directorioSalida);
+        if (!directorio.exists()) {
+            directorio.mkdir();
+        }
+
+        for (int i = 0; i < solucionesPorInstancia.size(); i++) {
+            List<IntegerSolution> soluciones = solucionesPorInstancia.get(i);
+            String nombreInstancia = nombresInstancias.get(i);
+            
+            DefaultXYDataset dataset = new DefaultXYDataset();
+
+            double[][] puntos = new double[2][soluciones.size()];
+            for (int j = 0; j < soluciones.size(); j++) {
+                Solution<?> solucion = soluciones.get(j);
+                puntos[0][j] = solucion.getObjective(0); // Primer objetivo
+                puntos[1][j] = solucion.getObjective(1); // Segundo objetivo
+            }
+
+            dataset.addSeries("Soluciones", puntos);
+
+            JFreeChart chart = ChartFactory.createScatterPlot(
+                    "Frente de Pareto - " + nombreInstancia,
+                    "Ganancia",
+                    "",
+                    dataset
+            );
+
+            File outputFile = new File(directorioSalida + "/" + nombreInstancia + ".png");
+            try {
+                ChartUtils.saveChartAsPNG(outputFile, chart, 800, 600);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
