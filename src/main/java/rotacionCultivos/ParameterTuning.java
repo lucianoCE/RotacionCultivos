@@ -26,9 +26,9 @@ public class ParameterTuning {
     private static final int[] POPULATION_SIZES = {50, 100, 200};
     private static final int[] MAX_EVALUATIONS = {10000, 25000, 50000};
     private static final double[] CROSSOVER_PROBABILITIES = {0.8, 0.9, 1.0};
-    private static final int NUMBER_OF_RUNS = 10;
+    private static final int NUMBER_OF_RUNS = 30;
     
-    private static double distIndex = 30.0;
+    private static double distIndex = 10.0;
 
     private static class Result {
         final double avgProfit;
