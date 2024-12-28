@@ -1,55 +1,113 @@
 Instancia: instanciaChica
 Objetivo: Ganancia
-Mejor Fitness: -3.060818289229999E7
-Fitness Promedio: -2.2515279797455814E7
-Desviación Estándar: 5375889.487211353
-p-value (Kolmogorov-Smirnov Test): 1.140805632182662E-7
+Mejor Fitness: -2.5162054361399993E7
+Fitness Promedio: -1.680931988787045E7
+Desviación Estándar: 5574270.357135694
+p-value (Kolmogorov-Smirnov Test): 2.637705731611817E-7
+
+Friedman Test Results:
+Number of treatments (k): 3
+Number of blocks (n): 2000
+Chi-squared statistic: 35.5679999999993
+Degrees of freedom: 2
+p-value: 1.8901964105033642E-8
+
+Average ranks por instancia:
+Instancia 1: 1,93
+Instancia 2: 1,96
+Instancia 3: 2,11
 
 Instancia: instanciaChica
 Objetivo: Diversidad
-Mejor Fitness: -0.8999611665361162
-Fitness Promedio: -0.7770628013064927
-Desviación Estándar: 0.06498733460134955
-p-value (Kolmogorov-Smirnov Test): 7.568686691827864E-7
+Mejor Fitness: -0.8471897314090017
+Fitness Promedio: -0.7257558911120995
+Desviación Estándar: 0.05224351403181044
+p-value (Kolmogorov-Smirnov Test): 6.1483040880716544E-12
+
+Friedman Test Results:
+Number of treatments (k): 3
+Number of blocks (n): 2000
+Chi-squared statistic: 111.24224999999933
+Degrees of freedom: 2
+p-value: 0.0
+
+Average ranks por instancia:
+Instancia 1: 2,14
+Instancia 2: 2,04
+Instancia 3: 1,82
 
 Instancia: instanciaMediana
 Objetivo: Ganancia
-Mejor Fitness: -6.927558037038499E8
-Fitness Promedio: -5.463011423715359E8
-Desviación Estándar: 6.3160868066669896E7
-p-value (Kolmogorov-Smirnov Test): 6.648011609322602E-6
+Mejor Fitness: -5.943281721375495E8
+Fitness Promedio: -4.679052984611047E8
+Desviación Estándar: 5.404239832991374E7
+p-value (Kolmogorov-Smirnov Test): 0.0
+
+Friedman Test Results:
+Number of treatments (k): 3
+Number of blocks (n): 2000
+Chi-squared statistic: 1.5610000000015134
+Degrees of freedom: 2
+p-value: 0.4581768655904267
+
+Average ranks por instancia:
+Instancia 1: 1,99
+Instancia 2: 2,02
+Instancia 3: 1,99
 
 Instancia: instanciaMediana
 Objetivo: Diversidad
-Mejor Fitness: -0.9687806326174597
-Fitness Promedio: -0.9002410672116614
-Desviación Estándar: 0.036966305502164336
-p-value (Kolmogorov-Smirnov Test): 2.6784160445103566E-6
+Mejor Fitness: -0.893425450505876
+Fitness Promedio: -0.8320632375473376
+Desviación Estándar: 0.031763884390042005
+p-value (Kolmogorov-Smirnov Test): 3.8909941935116876E-10
+
+Friedman Test Results:
+Number of treatments (k): 3
+Number of blocks (n): 2000
+Chi-squared statistic: 7.572000000000116
+Degrees of freedom: 2
+p-value: 0.022686165264600766
+
+Average ranks por instancia:
+Instancia 1: 2,00
+Instancia 2: 1,96
+Instancia 3: 2,04
 
 Instancia: instanciaGrande
 Objetivo: Ganancia
-Mejor Fitness: -3.6382511256000006E8
-Fitness Promedio: -2.782250541764E8
-Desviación Estándar: 4.994937489472884E7
-p-value (Kolmogorov-Smirnov Test): 1.3101664879855424E-4
+Mejor Fitness: -3.1859231365999997E8
+Fitness Promedio: -2.5575129229305664E8
+Desviación Estándar: 3.607104386305434E7
+p-value (Kolmogorov-Smirnov Test): 0.024350863752890306
+
+Friedman Test Results:
+Number of treatments (k): 3
+Number of blocks (n): 2000
+Chi-squared statistic: 2.6310000000012224
+Degrees of freedom: 2
+p-value: 0.26834011963115123
+
+Average ranks por instancia:
+Instancia 1: 2,02
+Instancia 2: 1,97
+Instancia 3: 2,01
 
 Instancia: instanciaGrande
 Objetivo: Diversidad
-Mejor Fitness: -0.9999999999999999
-Fitness Promedio: -0.9026355355446827
-Desviación Estándar: 0.07288308567943352
-p-value (Kolmogorov-Smirnov Test): 0.607532033187787
+Mejor Fitness: -0.9863798430313739
+Fitness Promedio: -0.8505174988969059
+Desviación Estándar: 0.07850696663011267
+p-value (Kolmogorov-Smirnov Test): 1.188556222586623E-5
 
-Instancia: instanciaVariada
-Objetivo: Ganancia
-Mejor Fitness: -1.4824926052255986E9
-Fitness Promedio: -1.2992630345140002E9
-Desviación Estándar: 8.649862720338304E7
-p-value (Kolmogorov-Smirnov Test): 2.655231590154017E-11
+Friedman Test Results:
+Number of treatments (k): 3
+Number of blocks (n): 2000
+Chi-squared statistic: 14.39325000000099
+Degrees of freedom: 2
+p-value: 7.491097923066903E-4
 
-Instancia: instanciaVariada
-Objetivo: Diversidad
-Mejor Fitness: -0.9328846718148995
-Fitness Promedio: -0.8816564881826326
-Desviación Estándar: 0.024998495147767318
-p-value (Kolmogorov-Smirnov Test): 7.386069533765749E-11
+Average ranks por instancia:
+Instancia 1: 2,04
+Instancia 2: 2,03
+Instancia 3: 1,93
