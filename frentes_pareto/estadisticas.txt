@@ -1,114 +1,122 @@
 Instancia: instanciaChica
 Objetivo: Ganancia
-Mejor Fitness: -2.5658596686299995E7
-Fitness Promedio: -1.7349320408624962E7
-Desviación Estándar: 5455201.692805673
+Mejor Fitness: -2.547207633409999E7
+Fitness Promedio: -1.717693698668863E7
+Desviación Estándar: 5552067.252234849
+p-value (Kolmogorov-Smirnov Test): 1.9984014443252818E-15
+
+Friedman Test Results:
+Number of treatments (k): 3
+Number of blocks (n): 2000
+Chi-squared statistic: 17.739000000001397
+Degrees of freedom: 2
+p-value: 1.4061287653888144E-4
+
+Average ranks por instancia:
+Instancia 1: 2,05
+Instancia 2: 2,03
+Instancia 3: 1,92
+
+Instancia: instanciaChica
+Objetivo: Diversidad
+Mejor Fitness: -0.8369229638089388
+Fitness Promedio: -0.7167408599119357
+Desviación Estándar: 0.05688468020019448
+p-value (Kolmogorov-Smirnov Test): 3.239193584581024E-6
+
+Friedman Test Results:
+Number of treatments (k): 3
+Number of blocks (n): 2000
+Chi-squared statistic: 1.0847500000018044
+Degrees of freedom: 2
+p-value: 0.5813658675058999
+
+Average ranks por instancia:
+Instancia 1: 1,99
+Instancia 2: 2,00
+Instancia 3: 2,02
+
+Instancia: instanciaChica
+Tiempo promedio de ejecución: 2075.633333333333 ms
+
+Instancia: instanciaMediana
+Objetivo: Ganancia
+Mejor Fitness: -5.909700909749997E8
+Fitness Promedio: -4.641860418073256E8
+Desviación Estándar: 5.2923816223617785E7
 p-value (Kolmogorov-Smirnov Test): 0.0
 
 Friedman Test Results:
 Number of treatments (k): 3
 Number of blocks (n): 2000
-Chi-squared statistic: 94.25200000000041
+Chi-squared statistic: 144.64900000000125
 Degrees of freedom: 2
 p-value: 0.0
 
 Average ranks por instancia:
-Instancia 1: 1,85
-Instancia 2: 2,00
-Instancia 3: 2,15
+Instancia 1: 2,22
+Instancia 2: 1,86
+Instancia 3: 1,92
 
-Instancia: instanciaChica
+Instancia: instanciaMediana
 Objetivo: Diversidad
-Mejor Fitness: -0.8237301050271603
-Fitness Promedio: -0.7100408788652403
-Desviación Estándar: 0.05824985752577543
-p-value (Kolmogorov-Smirnov Test): 1.364331980724387E-10
+Mejor Fitness: -0.8929120190650661
+Fitness Promedio: -0.8341513408418652
+Desviación Estándar: 0.035917608758234514
+p-value (Kolmogorov-Smirnov Test): 3.2300402241780546E-8
 
 Friedman Test Results:
 Number of treatments (k): 3
 Number of blocks (n): 2000
-Chi-squared statistic: 38.63100000000122
+Chi-squared statistic: 151.6810000000005
 Degrees of freedom: 2
-p-value: 4.0868145534389555E-9
+p-value: 0.0
 
 Average ranks por instancia:
-Instancia 1: 2,11
-Instancia 2: 1,93
-Instancia 3: 1,95
+Instancia 1: 1,93
+Instancia 2: 2,22
+Instancia 3: 1,85
 
 Instancia: instanciaMediana
+Tiempo promedio de ejecución: 1951.4666666666667 ms
+
+Instancia: instanciaGrande
 Objetivo: Ganancia
-Mejor Fitness: -5.8065784345475E8
-Fitness Promedio: -4.6446100468144584E8
-Desviación Estándar: 5.260205135848405E7
-p-value (Kolmogorov-Smirnov Test): 6.694256260431075E-11
+Mejor Fitness: -3.1261698126E8
+Fitness Promedio: -2.5010312402310663E8
+Desviación Estándar: 3.623013774056727E7
+p-value (Kolmogorov-Smirnov Test): 1.7328012388295733E-5
 
 Friedman Test Results:
 Number of treatments (k): 3
 Number of blocks (n): 2000
-Chi-squared statistic: 23.824000000000524
+Chi-squared statistic: 12.39600000000064
 Degrees of freedom: 2
-p-value: 6.709406909055637E-6
-
-Average ranks por instancia:
-Instancia 1: 2,01
-Instancia 2: 1,92
-Instancia 3: 2,07
-
-Instancia: instanciaMediana
-Objetivo: Diversidad
-Mejor Fitness: -0.8900981478254747
-Fitness Promedio: -0.8312407686368973
-Desviación Estándar: 0.03602343777107084
-p-value (Kolmogorov-Smirnov Test): 2.9976021664879227E-15
-
-Friedman Test Results:
-Number of treatments (k): 3
-Number of blocks (n): 2000
-Chi-squared statistic: 0.34900000000197906
-Degrees of freedom: 2
-p-value: 0.8398768542283794
+p-value: 0.002033493559136179
 
 Average ranks por instancia:
 Instancia 1: 2,00
-Instancia 2: 1,99
-Instancia 3: 2,01
-
-Instancia: instanciaGrande
-Objetivo: Ganancia
-Mejor Fitness: -3.2478781214E8
-Fitness Promedio: -2.5564166374582332E8
-Desviación Estándar: 3.669860638974907E7
-p-value (Kolmogorov-Smirnov Test): 6.558351739727186E-5
-
-Friedman Test Results:
-Number of treatments (k): 3
-Number of blocks (n): 2000
-Chi-squared statistic: 7.2040000000015425
-Degrees of freedom: 2
-p-value: 0.027269129613408438
-
-Average ranks por instancia:
-Instancia 1: 2,02
-Instancia 2: 2,03
+Instancia 2: 2,06
 Instancia 3: 1,95
 
 Instancia: instanciaGrande
 Objetivo: Diversidad
-Mejor Fitness: -0.976658430606646
-Fitness Promedio: -0.8520202536415562
-Desviación Estándar: 0.07545946181605266
-p-value (Kolmogorov-Smirnov Test): 2.2205153580201475E-5
+Mejor Fitness: -0.983468509090959
+Fitness Promedio: -0.8555294394796382
+Desviación Estándar: 0.07423133804515018
+p-value (Kolmogorov-Smirnov Test): 3.175571297988622E-4
 
 Friedman Test Results:
 Number of treatments (k): 3
 Number of blocks (n): 2000
-Chi-squared statistic: 7.443250000000262
+Chi-squared statistic: 4.546750000001339
 Degrees of freedom: 2
-p-value: 0.02419461962702507
+p-value: 0.10296408920901501
 
 Average ranks por instancia:
-Instancia 1: 1,98
-Instancia 2: 2,05
-Instancia 3: 1,97
+Instancia 1: 2,03
+Instancia 2: 2,01
+Instancia 3: 1,96
 
+Instancia: instanciaGrande
+Tiempo promedio de ejecución: 1535.0666666666666 ms

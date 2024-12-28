@@ -27,14 +27,14 @@ public class ParetoEstimate {
         List<List<IntegerSolution>> solucionesPorInstancia = new ArrayList<>();
         List<String> nombresInstancias = List.of("instanciaChica", "instanciaMediana", "instanciaGrande");
 
-        // Store results for each instance and each execution
         List<List<List<Double>>> gananciasPorInstancia = new ArrayList<>();
         List<List<List<Double>>> diversidadesPorInstancia = new ArrayList<>();
-        
-        // Initialize lists for each instance
+        List<List<Long>> tiemposPorInstancia = new ArrayList<>();
+
         for (int i = 0; i < instancias.size(); i++) {
             gananciasPorInstancia.add(new ArrayList<>());
             diversidadesPorInstancia.add(new ArrayList<>());
+            tiemposPorInstancia.add(new ArrayList<>());
         }
 
         for (String archivoInstancia : instancias) {
@@ -54,6 +54,7 @@ public class ParetoEstimate {
             List<IntegerSolution> solucionesDeInstancia = new ArrayList<>();
             List<Double> ganancias = new ArrayList<>();
             List<Double> diversidades = new ArrayList<>();
+            List<Long> tiemposDeEjecucion = tiemposPorInstancia.get(instanceIndex);
 
             for (int i = 0; i < 30; i++) {
                 double crossoverProbability = 0.9;
@@ -71,7 +72,12 @@ public class ParetoEstimate {
                  .setSolutionListEvaluator(new SequentialSolutionListEvaluator<>())
                  .build();
 
+                long startTime = System.currentTimeMillis(); // Inicio del tiempo
                 algorithm.run();
+                long endTime = System.currentTimeMillis(); // Fin del tiempo
+                
+                long tiempoEjecucion = endTime - startTime;
+                tiemposDeEjecucion.add(tiempoEjecucion);
 
                 List<IntegerSolution> population = algorithm.getResult();
                 solucionesDeInstancia.addAll(population);
@@ -85,9 +91,17 @@ public class ParetoEstimate {
             solucionesPorInstancia.add(obtenerNoDominadas(solucionesDeInstancia));
             calcularEstadisticas(ganancias, nombresInstancias.get(instanceIndex), "Ganancia");
             calcularEstadisticas(diversidades, nombresInstancias.get(instanceIndex), "Diversidad");
+
+            calcularTiempoPromedio(tiemposDeEjecucion, nombresInstancias.get(instanceIndex));
         }
 
         ScatterPlot.guardarFrentePareto(solucionesPorInstancia, nombresInstancias);
+    }
+
+    private static void calcularTiempoPromedio(List<Long> tiempos, String nombreInstancia) {
+        double promedio = tiempos.stream().mapToLong(Long::longValue).average().orElse(0.0);
+        System.out.println("Instancia: " + nombreInstancia);
+        System.out.println("Tiempo promedio de ejecución: " + promedio + " ms\n");
     }
 
     private static void calcularEstadisticas(List<Double> fitnesses, String nombreInstancia, String objetivo) {
