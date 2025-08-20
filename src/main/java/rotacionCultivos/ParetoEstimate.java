@@ -16,6 +16,8 @@ import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.io.FileWriter;
 import java.io.File;
 import java.io.IOException;
@@ -90,8 +92,19 @@ public class ParetoEstimate {
                     diversidades.add(solution.getObjective(1));
                 }
             }
-            
-            solucionesPorInstancia.add(obtenerNoDominadas(solucionesDeInstancia));
+
+            List<IntegerSolution> noDominadas = obtenerNoDominadas(solucionesDeInstancia);
+            Set<String> seen = new HashSet<>();
+            List<IntegerSolution> unicas = new ArrayList<>();
+
+            for (IntegerSolution sol : noDominadas) { // eliminar duplicados
+                String key = Arrays.toString(sol.getObjectives());
+                if (!seen.contains(key)) {
+                    seen.add(key);
+                    unicas.add(sol);
+                }
+            }
+            solucionesPorInstancia.add(unicas);
             String nombreArchivo = "pareto_" + nombresInstancias.get(instanceIndex) + ".csv";
             ParetoEstimate.saveParetoFrontToCSV(solucionesPorInstancia.get(instanceIndex), nombreArchivo);
             calcularEstadisticas(ganancias, nombresInstancias.get(instanceIndex), "Ganancia");
