@@ -16,6 +16,9 @@ import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.io.FileWriter;
+import java.io.File;
+import java.io.IOException;
 
 public class ParetoEstimate {
     public static void main(String[] args) {
@@ -89,6 +92,8 @@ public class ParetoEstimate {
             }
             
             solucionesPorInstancia.add(obtenerNoDominadas(solucionesDeInstancia));
+            String nombreArchivo = "pareto_" + nombresInstancias.get(instanceIndex) + ".csv";
+            ParetoEstimate.saveParetoFrontToCSV(solucionesPorInstancia.get(instanceIndex), nombreArchivo);
             calcularEstadisticas(ganancias, nombresInstancias.get(instanceIndex), "Ganancia");
             calcularEstadisticas(diversidades, nombresInstancias.get(instanceIndex), "Diversidad");
 
@@ -96,6 +101,27 @@ public class ParetoEstimate {
         }
 
         ScatterPlot.guardarFrentePareto(solucionesPorInstancia, nombresInstancias);
+    }
+
+    public static void saveParetoFrontToCSV(List<IntegerSolution> paretoFront, String fileName) {
+        try {
+            File file = new File("frentes_pareto", fileName);
+
+            try (FileWriter writer = new FileWriter(file)) {
+                writer.append("Ganancia,Diversidad\n");
+
+                for (IntegerSolution sol : paretoFront) {
+                    for (int i = 0; i < sol.getNumberOfObjectives(); i++) {
+                        writer.append(String.valueOf(sol.getObjective(i))).append(",");
+                    }
+                    writer.append("\n");
+                }
+
+                System.out.println("Frente de Pareto guardado en: " + "frentes_pareto/" + file.getName());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void calcularTiempoPromedio(List<Long> tiempos, String nombreInstancia) {
@@ -146,7 +172,7 @@ public class ParetoEstimate {
     private static void realizarTestDeFriedman(List<List<Double>> distribuciones) {
         int k = distribuciones.size();  // Number of treatments (instances)
         int n = distribuciones.get(0).size();  // Number of blocks (runs)
-        
+
         // Create a matrix where rows are blocks (runs) and columns are treatments (instances)
         double[][] data = new double[n][k];
         for (int i = 0; i < k; i++) {
@@ -224,8 +250,7 @@ public class ParetoEstimate {
             System.out.printf("Instancia %d: %.2f%n", j + 1, columnSums[j] / n);
         }
     }
-    
-        
+
     public static <S extends Solution<?>> List<S> obtenerNoDominadas(List<S> soluciones) {
         List<S> noDominadas = new ArrayList<>();
         for (S solucion1 : soluciones) {
