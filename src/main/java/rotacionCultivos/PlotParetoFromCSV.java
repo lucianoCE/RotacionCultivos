@@ -4,6 +4,14 @@ import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+
+import java.awt.Color;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Path2D;
 
 import rotacionCultivos.GreedyAgriculturalSolver.Result;
 import rotacionCultivos.Main.AgriculturalData;
@@ -47,15 +55,11 @@ public class PlotParetoFromCSV {
             File outputFile = new File(baseDir, fileMapping.get(csvFile));
             String chartTitle = titleMapping.get(csvFile);
 
-            double[][] puntos = leerCSV(inputFile);
-
             DefaultXYDataset dataset = new DefaultXYDataset();
-            dataset.addSeries("Solutions", puntos);
-
             // Run greedy solvers
             GreedyAgriculturalSolver solverDiversity = new GreedyAgriculturalSolver(
                     data.cantParcelas, data.cantSemestres,
-                    data.cantCultivos, data.areaParcelas, data.rendimientoCultivoChico, 
+                    data.cantCultivos, data.areaParcelas, data.rendimientoCultivoChico,
                     data.rendimientoCultivoMediano, data.rendimientoCultivoGrande,
                     data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo,
                     "diversidad");
@@ -63,22 +67,26 @@ public class PlotParetoFromCSV {
 
             GreedyAgriculturalSolver solverProfit = new GreedyAgriculturalSolver(
                     data.cantParcelas, data.cantSemestres,
-                    data.cantCultivos, data.areaParcelas, data.rendimientoCultivoChico, 
+                    data.cantCultivos, data.areaParcelas, data.rendimientoCultivoChico,
                     data.rendimientoCultivoMediano, data.rendimientoCultivoGrande,
                     data.precioCultivo, data.costoMantCultivo, data.temporadaCultivo,
                     "ganancia");
             Result cropPlanProfit = solverProfit.solve();
-            
-            AgriculturalOptimizationProblem problem = new AgriculturalOptimizationProblem(data.cantParcelas, data.cantFilas,
-    				data.cantSemestres, data.cantCultivos, data.areaParcelas, data.rendimientoCultivoChico,
-    				data.rendimientoCultivoMediano, data.rendimientoCultivoGrande, data.precioCultivo,
-    				data.costoMantCultivo, data.temporadaCultivo);
-            
-            List<IntegerSolution> greedyProfitResult = solverProfit.initializePopulation(problem, cropPlanProfit.cropPlan,
-    				cropPlanProfit.totalProfit, cropPlanProfit.diversityScore);
 
-    		List<IntegerSolution> greedyDiversityResult = solverDiversity.initializePopulation(problem,
-    				cropPlanDiversity.cropPlan, cropPlanDiversity.totalProfit, cropPlanDiversity.diversityScore);
+            AgriculturalOptimizationProblem problem = new AgriculturalOptimizationProblem(data.cantParcelas, data.cantFilas,
+                    data.cantSemestres, data.cantCultivos, data.areaParcelas, data.rendimientoCultivoChico,
+                    data.rendimientoCultivoMediano, data.rendimientoCultivoGrande, data.precioCultivo,
+                    data.costoMantCultivo, data.temporadaCultivo);
+
+            List<IntegerSolution> greedyProfitResult = solverProfit.initializePopulation(problem, cropPlanProfit.cropPlan,
+                    cropPlanProfit.totalProfit, cropPlanProfit.diversityScore);
+
+            List<IntegerSolution> greedyDiversityResult = solverDiversity.initializePopulation(problem,
+                    cropPlanDiversity.cropPlan, cropPlanDiversity.totalProfit, cropPlanDiversity.diversityScore);
+
+
+            double[][] puntos = leerCSV(inputFile);
+            dataset.addSeries("Solutions", puntos);
 
             // Add diversity greedy solution
             double[][] diversityPoint = new double[2][1];
@@ -94,6 +102,10 @@ public class PlotParetoFromCSV {
             dataset.addSeries("Greedy Profit", profitPoint);
             System.out.println("Greedy-Profit point: (" + profitPoint[0][0] + ", " + profitPoint[1][0] + ")");
 
+
+
+
+// after creating chart:
             JFreeChart chart = ChartFactory.createScatterPlot(
                     chartTitle,
                     "Profit",
@@ -101,6 +113,30 @@ public class PlotParetoFromCSV {
                     dataset
             );
 
+// Custom renderer
+            XYPlot plot = chart.getXYPlot();
+            XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(false, true);
+
+// Shapes
+            Shape circle = new Ellipse2D.Double(-3, -3, 6, 6);       // blue circles
+            Shape square = new Rectangle2D.Double(-4, -4, 8, 8);     // red square
+            Shape triangle = new Path2D.Double();
+            ((Path2D) triangle).moveTo(0, -5);
+            ((Path2D) triangle).lineTo(5, 5);
+            ((Path2D) triangle).lineTo(-5, 5);
+            ((Path2D) triangle).closePath();
+
+// You added series in this order: Greedy Diversity, Greedy Profit, Solutions
+            renderer.setSeriesPaint(0, Color.BLUE.brighter());
+            renderer.setSeriesShape(0, circle);
+            renderer.setSeriesPaint(1, Color.RED);
+            renderer.setSeriesShape(1, square);
+            renderer.setSeriesPaint(2, Color.GREEN.darker());
+            renderer.setSeriesShape(2, triangle);
+
+
+
+            plot.setRenderer(renderer);
             try {
                 ChartUtils.saveChartAsPNG(outputFile, chart, 800, 600);
                 System.out.println("Saved: " + outputFile.getAbsolutePath());
