@@ -103,6 +103,12 @@ public class GreedyAgriculturalSolver {
 		// Promediar la diversidad de todas las parcelas
 		double normalizedDiversityScore = totalDiversityScore / cantParcelas;
 
+        System.out.println(prioridad);
+        for (int parcela = 0; parcela < cantParcelas; parcela++) {
+            for (int semestre = 0; semestre < cantSemestres; semestre++) {
+                System.out.println("Parcela " + parcela + " semestre " + semestre + ": " + cropPlan[parcela][semestre]);
+            }
+        }
 		return new Result(cropPlan, totalProfit, normalizedDiversityScore);
 	}
 
@@ -140,7 +146,7 @@ public class GreedyAgriculturalSolver {
 	        double maxDiversity = -1;
 
 	     // Probar cada cultivo para la parcela actual
-	        for (int cultivo = 1; cultivo < cantCultivos; cultivo++) { // Cultivos desde 1
+	        for (int cultivo = 0; cultivo < cantCultivos; cultivo++) { // Cultivos desde 1
 	            char temporada = (semestre % 2 == 0) ? 'V' : 'I';
 	            if (temporadaCultivo[cultivo] == temporada || temporadaCultivo[cultivo] == 'A') {
 	                // Simular la asignación del cultivo
@@ -148,10 +154,15 @@ public class GreedyAgriculturalSolver {
 	                double parcelDiversity = calculateParcelDiversity(cropFrequency[parcela]);
 	                cropFrequency[parcela][cultivo]--;
 
-	                if (parcelDiversity > maxDiversity) {
-	                    maxDiversity = parcelDiversity;
-	                    bestCrop = cultivo;
+	                if (parcelDiversity == maxDiversity) { // DESEMPATE
+                        if (bestCrop == 0) {
+                            bestCrop = cultivo; // Cultivo "real"
+                        }
 	                }
+                    else if (parcelDiversity > maxDiversity) {
+                        maxDiversity = parcelDiversity;
+                        bestCrop = cultivo;
+                    }
 	            }
 	        }
 		}
