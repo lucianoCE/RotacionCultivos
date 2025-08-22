@@ -103,12 +103,6 @@ public class GreedyAgriculturalSolver {
 		// Promediar la diversidad de todas las parcelas
 		double normalizedDiversityScore = totalDiversityScore / cantParcelas;
 
-        System.out.println(prioridad);
-        for (int parcela = 0; parcela < cantParcelas; parcela++) {
-            for (int semestre = 0; semestre < cantSemestres; semestre++) {
-                System.out.println("Parcela " + parcela + " semestre " + semestre + ": " + cropPlan[parcela][semestre]);
-            }
-        }
 		return new Result(cropPlan, totalProfit, normalizedDiversityScore);
 	}
 
