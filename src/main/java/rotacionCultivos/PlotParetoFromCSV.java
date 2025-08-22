@@ -85,12 +85,14 @@ public class PlotParetoFromCSV {
             diversityPoint[0][0] = -greedyDiversityResult.get(0).getObjective(0); // Profit
             diversityPoint[1][0] = -greedyDiversityResult.get(0).getObjective(1); // Diversity
             dataset.addSeries("Greedy Diversity", diversityPoint);
+            System.out.println("Greedy-Diversity point: (" + diversityPoint[0][0] + ", " + diversityPoint[1][0] + ")");
 
             // Add profit greedy solution
             double[][] profitPoint = new double[2][1];
             profitPoint[0][0] = -greedyProfitResult.get(0).getObjective(0);
             profitPoint[1][0] = -greedyProfitResult.get(0).getObjective(1);
             dataset.addSeries("Greedy Profit", profitPoint);
+            System.out.println("Greedy-Profit point: (" + profitPoint[0][0] + ", " + profitPoint[1][0] + ")");
 
             JFreeChart chart = ChartFactory.createScatterPlot(
                     chartTitle,
