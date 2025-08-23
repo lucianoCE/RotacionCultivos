@@ -14,14 +14,27 @@ public class CompromiseSolver {
     }
 
     public static Point calculateCompromiseAbsolute(List<Point> points) {
-        double maxGanancia = points.stream().mapToDouble(p -> p.ganancia).min().orElse(0);
-        double maxDiversidad = points.stream().mapToDouble(p -> p.diversidad).min().orElse(0);
+        // Ideal utópico por componente
+        double idealGanancia = points.stream().mapToDouble(p -> p.ganancia).min().orElse(0);
+        double idealDiversidad = points.stream().mapToDouble(p -> p.diversidad).min().orElse(0);
+
+        // Rango de cada objetivo
+        double minGanancia = points.stream().mapToDouble(p -> p.ganancia).min().orElse(1);
+        double maxGanancia = points.stream().mapToDouble(p -> p.ganancia).max().orElse(1);
+        double rangeGanancia = maxGanancia - minGanancia;
+
+        double minDiversidad = points.stream().mapToDouble(p -> p.diversidad).min().orElse(1);
+        double maxDiversidad = points.stream().mapToDouble(p -> p.diversidad).max().orElse(1);
+        double rangeDiversidad = maxDiversidad - minDiversidad;
 
         Point best = null;
         double bestDist = Double.MAX_VALUE;
+
         for (Point p : points) {
-            double dist = Math.sqrt(Math.pow((maxGanancia - p.ganancia), 2) +
-                    Math.pow((maxDiversidad - p.diversidad), 2));
+            double normGanancia = (p.ganancia - idealGanancia) / rangeGanancia;
+            double normDiversidad = (p.diversidad - idealDiversidad) / rangeDiversidad;
+            double dist = Math.sqrt(normGanancia * normGanancia + normDiversidad * normDiversidad);
+
             if (dist < bestDist) {
                 bestDist = dist;
                 best = p;
@@ -31,14 +44,27 @@ public class CompromiseSolver {
     }
 
     public static Point calculateCompromiseGreedy(List<Point> points, Point greedyProfit, Point greedyDiversity) {
+        // Punto ideal definido por los greedy
         double idealGanancia = greedyProfit.ganancia;
         double idealDiversidad = greedyDiversity.diversidad;
 
+        // Rango de cada objetivo
+        double minGanancia = points.stream().mapToDouble(p -> p.ganancia).min().orElse(1);
+        double maxGanancia = points.stream().mapToDouble(p -> p.ganancia).max().orElse(1);
+        double rangeGanancia = maxGanancia - minGanancia;
+
+        double minDiversidad = points.stream().mapToDouble(p -> p.diversidad).min().orElse(1);
+        double maxDiversidad = points.stream().mapToDouble(p -> p.diversidad).max().orElse(1);
+        double rangeDiversidad = maxDiversidad - minDiversidad;
+
         Point best = null;
         double bestDist = Double.MAX_VALUE;
+
         for (Point p : points) {
-            double dist = Math.sqrt(Math.pow((idealGanancia - p.ganancia), 2) +
-                    Math.pow((idealDiversidad - p.diversidad), 2));
+            double normGanancia = (p.ganancia - idealGanancia) / rangeGanancia;
+            double normDiversidad = (p.diversidad - idealDiversidad) / rangeDiversidad;
+            double dist = Math.sqrt(normGanancia * normGanancia + normDiversidad * normDiversidad);
+
             if (dist < bestDist) {
                 bestDist = dist;
                 best = p;
@@ -106,13 +132,11 @@ public class CompromiseSolver {
 
 
             Point compromise = calculateCompromiseAbsolute(points);
-            System.out.println("Solución sin resultados de greedy:");
-            System.out.println("Compromise Solution: Ganancia=" + -compromise.ganancia +
+            System.out.println("Solución sin resultados de greedy: Ganancia=" + -compromise.ganancia +
                     ", Diversidad=" + -compromise.diversidad);
 
             Point compromiseGreedy = calculateCompromiseGreedy(points, profitPoint, diversityPoint);
-            System.out.println("Solución con resultados de greedy:");
-            System.out.println("Compromise Solution: Ganancia=" + -compromiseGreedy.ganancia +
+            System.out.println("Solución con resultados de greedy Ganancia=" + -compromiseGreedy.ganancia +
                     ", Diversidad=" + -compromiseGreedy.diversidad);
         }
 
