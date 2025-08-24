@@ -77,31 +77,7 @@ public class GreedyAgriculturalSolver {
 		}
 
 		// Calcular la diversidad para cada parcela
-		double totalDiversityScore = 0.0;
-		for (int i = 0; i < cantParcelas; i++) {
-			double totalCultivos = 0; // Total de cultivos en la parcela i considerando semestres
-			for (int k = 1; k < cantCultivos; k++) { // Empezar desde 1, ya que 0 significa "sin cultivo"
-				totalCultivos += cropFrequency[i][k]; // Sumar las frecuencias de cultivos
-			}
-
-			if (totalCultivos > 0) { // Si la parcela tiene cultivos (no es 0)
-				double parcelDiversityScore = 0.0; // Diversidad para esta parcela
-				for (int k = 1; k < cantCultivos; k++) {
-					if (cropFrequency[i][k] > 0) {
-						double fk = cropFrequency[i][k] / totalCultivos; // Frecuencia relativa
-						parcelDiversityScore += fk * Math.log(fk);
-					}
-				}
-
-				// Normalizar la diversidad de esta parcela
-				parcelDiversityScore = -parcelDiversityScore / Math.log(cantCultivos - 1); // Dividir entre el logaritmo
-																							// de los cultivos
-				totalDiversityScore += parcelDiversityScore; // Sumar a la diversidad total
-			}
-		}
-
-		// Promediar la diversidad de todas las parcelas
-		double normalizedDiversityScore = totalDiversityScore / cantParcelas;
+        double normalizedDiversityScore = calculateGlobalDiversity(cropFrequency);
 
 		return new Result(cropPlan, totalProfit, normalizedDiversityScore);
 	}
@@ -163,25 +139,29 @@ public class GreedyAgriculturalSolver {
 		return bestCrop;
 	}
 
-    private double calculateGlobalDiversity(int[][] cropFrequency) {
-        double sum = 0.0;
+    private double calculateParcelDiversity(int[] parcelaCropFrequency) {
+        double totalCultivos = 0.0;
+        for (int freq = 1; freq < cantCultivos; freq++) { // ignorar descanso
+            totalCultivos += parcelaCropFrequency[freq];
+        }
+        if (totalCultivos == 0) return 0.0;
 
-        for (int cultivo = 1; cultivo < cantCultivos; cultivo++) { // ignorar descanso
-            for (int parcela = 0; parcela < cantParcelas; parcela++) {
-                double totalCultivosParcela = 0.0;
-                for (int k = 1; k < cantCultivos; k++) {
-                    totalCultivosParcela += cropFrequency[parcela][k];
-                }
-                if (totalCultivosParcela > 0) {
-                    double fk = cropFrequency[parcela][cultivo] / totalCultivosParcela;
-                    if (fk > 0) {
-                        sum += fk * Math.log(fk);
-                    }
-                }
+        double sum = 0.0;
+        for (int k = 1; k < cantCultivos; k++) {
+            if (parcelaCropFrequency[k] > 0) {
+                double fk = parcelaCropFrequency[k] / totalCultivos;
+                sum += fk * Math.log(fk);
             }
         }
-
         return -sum / Math.log(cantCultivos - 1);
+    }
+
+    private double calculateGlobalDiversity(int[][] cropFrequency) {
+        double sumDiversity = 0.0;
+        for (int parcela = 0; parcela < cantParcelas; parcela++) {
+            sumDiversity += calculateParcelDiversity(cropFrequency[parcela]);
+        }
+        return sumDiversity / cantParcelas;
     }
 
 	public List<IntegerSolution> initializePopulation(AbstractIntegerProblem problem, int[][] cropPlan,
