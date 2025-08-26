@@ -26,7 +26,6 @@ def graficar_datos(data, columna_y, nombre_y, archivo_salida_base):
             plt.plot(pop_subset['MaxEvals'], pop_subset[columna_y], marker='o', label=f'PopSize: {pop_size}')
         
         # Configurar el gráfico
-        plt.title(f'{nombre_y} vs MaxEvals (CrossProb: {cross_prob})')
         plt.xlabel('MaxEvals')
         plt.ylabel(nombre_y)
         plt.legend()
@@ -48,7 +47,7 @@ def main():
         graficar_datos(
             datos, 
             columna_y='AvgTime', 
-            nombre_y='Tiempo Promedio (s)', 
+            nombre_y='Average time (s)',
             archivo_salida_base='grafico_tiempo_promedio'
         )
         
@@ -56,7 +55,7 @@ def main():
         graficar_datos(
             datos, 
             columna_y='AvgHypervolume', 
-            nombre_y='Hipervolumen Promedio', 
+            nombre_y='Hypervolume', 
             archivo_salida_base='grafico_hipervolumen_promedio'
         )
 
@@ -64,7 +63,7 @@ def main():
         graficar_datos(
             datos, 
             columna_y='AvgProfit', 
-            nombre_y='Ganancia Promedio', 
+            nombre_y='Profit', 
             archivo_salida_base='grafico_ganancia_promedio'
         )
 
@@ -72,7 +71,7 @@ def main():
         graficar_datos(
             datos, 
             columna_y='AvgDiversity', 
-            nombre_y='Diversidad Promedio', 
+            nombre_y='Diversity', 
             archivo_salida_base='grafico_diversidad_promedio'
         )
         
