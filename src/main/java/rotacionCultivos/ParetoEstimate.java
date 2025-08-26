@@ -93,18 +93,7 @@ public class ParetoEstimate {
                 }
             }
 
-            List<IntegerSolution> noDominadas = obtenerNoDominadas(solucionesDeInstancia);
-            Set<String> seen = new HashSet<>();
-            List<IntegerSolution> unicas = new ArrayList<>();
-
-            for (IntegerSolution sol : noDominadas) { // eliminar duplicados
-                String key = Arrays.toString(sol.getObjectives());
-                if (!seen.contains(key)) {
-                    seen.add(key);
-                    unicas.add(sol);
-                }
-            }
-            solucionesPorInstancia.add(unicas);
+            solucionesPorInstancia.add(obtenerNoDominadas(solucionesDeInstancia));
             String nombreArchivo = "pareto_" + nombresInstancias.get(instanceIndex) + ".csv";
             ParetoEstimate.saveParetoFrontToCSV(solucionesPorInstancia.get(instanceIndex), nombreArchivo);
             calcularEstadisticas(ganancias, nombresInstancias.get(instanceIndex), "Ganancia");
@@ -184,7 +173,11 @@ public class ParetoEstimate {
 
     private static void realizarTestDeFriedman(List<List<Double>> distribuciones) {
         int k = distribuciones.size();  // Number of treatments (instances)
-        int n = distribuciones.get(0).size();  // Number of blocks (runs)
+        int n = distribuciones.stream().mapToInt(List::size).min().orElse(0);
+        if (n == 0) {
+            System.out.println("No hay suficientes datos para realizar el test de Friedman.");
+            return;
+        }
 
         // Create a matrix where rows are blocks (runs) and columns are treatments (instances)
         double[][] data = new double[n][k];
